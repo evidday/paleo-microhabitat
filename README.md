@@ -99,6 +99,10 @@ process.exit(f);
 "
 ```
 
+## Other workshops
+
+Comfortable with agents already? The [Ship Loop workshop](https://ludenio.github.io/ShipLoopWorkshop/) is a 60-minute session for experienced developers. Together you grow a simple agent workflow into a production-ready loop.
+
 ## License
 
 MIT
