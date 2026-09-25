@@ -3,26 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game</title>
+    <title>Paleo Microhabitat</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #1a1a2e; color: #eee; font-family: sans-serif; overflow: hidden; }
-        canvas { display: block; margin: 0 auto; }
+        html, body { height: 100%; }
+        body { background: #17160f; color: #e8e2cc; font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; overflow: hidden; user-select: none; }
+        canvas { display: block; position: fixed; top: 0; left: 0; }
+
+        /* HUD: thin, translucent, subordinate to the world */
+        #hud { position: fixed; inset: 0; pointer-events: none; display: none; text-shadow: 0 1px 3px #000; }
+        .hud-top { position: absolute; top: 14px; left: 18px; right: 18px; display: flex; gap: 22px; align-items: center; font-size: 12px; letter-spacing: .12em; }
+        .stat { display: flex; align-items: center; gap: 8px; }
+        .stat .lbl { opacity: .8; width: 78px; }
+        .stat b { font-weight: normal; width: 52px; font-size: 11px; opacity: .85; }
+        .bar { display: inline-block; width: 130px; height: 7px; background: rgba(20,19,13,.65); border: 1px solid rgba(232,226,204,.35); border-radius: 4px; overflow: hidden; }
+        .bar i { display: block; height: 100%; background: #d9a441; transition: width .15s linear; }
+        .bar.moist i { background: #63aaa4; }
+        .bar.low { animation: lowpulse .7s infinite alternate; border-color: #e0a070; }
+        @keyframes lowpulse { from { opacity: 1; } to { opacity: .45; } }
+        .time { margin-left: auto; font-size: 20px; letter-spacing: .1em; }
+        .hud-hint { position: absolute; bottom: 60px; width: 100%; text-align: center; font-size: 14px; letter-spacing: .06em; transition: opacity 1s; opacity: 0; }
+        .hud-bottom { position: absolute; bottom: 16px; left: 18px; right: 18px; display: flex; justify-content: space-between; font-size: 12px; letter-spacing: .14em; opacity: .85; }
+        #hud-cover.hidden::before { content: '\25CF  '; color: #6c8d5a; }
+        #hud-cover.exposed::before { content: '\25CB  '; color: #d9a441; }
+
+        /* screens */
+        .screen { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, rgba(10,12,8,.55), rgba(10,12,8,.82)); }
+        #result-screen { animation: fadein .9s .5s both; }
+        @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+        .card { width: min(660px, 92vw); padding: 30px 34px; background: rgba(28,27,19,.9); border: 1px solid rgba(200,170,110,.35); border-radius: 8px; text-align: center; box-shadow: 0 10px 50px rgba(0,0,0,.6); }
+        h1 { font-size: 28px; letter-spacing: .28em; font-weight: normal; color: #ecdcae; }
+        h2 { font-size: 32px; letter-spacing: .3em; font-weight: normal; color: #ecdcae; }
+        .tag { margin: 12px 0 6px; font-size: 15px; opacity: .9; line-height: 1.4; }
+        .hum { margin: 12px 0; font-size: 14px; letter-spacing: .16em; color: #8fc4bd; }
+        .pick { margin: 16px 0 10px; font-size: 12px; letter-spacing: .22em; opacity: .7; }
+        .traits { display: flex; gap: 10px; }
+        .trait { flex: 1; padding: 12px 8px; background: rgba(60,56,38,.5); border: 1px solid rgba(200,170,110,.25); border-radius: 6px; color: #d8cfae; cursor: pointer; font: inherit; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .trait svg { width: 40px; height: 40px; }
+        .trait .tn { font-size: 12px; letter-spacing: .12em; }
+        .trait .tt { font-size: 12px; opacity: .8; line-height: 1.35; }
+        .trait:hover { border-color: rgba(230,200,140,.7); }
+        .trait.on { background: rgba(120,98,48,.55); border-color: #e8c878; color: #fff3cc; box-shadow: 0 0 14px rgba(232,200,120,.3); }
+        .go { margin-top: 20px; padding: 12px 40px; font: inherit; font-size: 15px; letter-spacing: .3em; color: #1c1a10; background: #dcb765; border: 0; border-radius: 5px; cursor: pointer; }
+        .go:hover { background: #ecc878; }
+        .go.alt { background: transparent; color: #dcb765; border: 1px solid #dcb765; margin-left: 10px; letter-spacing: .16em; }
+        .fine { margin-top: 14px; font-size: 11px; opacity: .55; }
+        .rows { margin: 16px auto 0; max-width: 360px; text-align: left; }
+        .r { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(200,170,110,.15); font-size: 14px; }
+        .r span { opacity: .75; }
+        .r b { font-weight: normal; color: #f2e4b8; }
+        @media (max-width: 640px) { .traits { flex-direction: column; } h1 { font-size: 20px; } }
     </style>
 </head>
 <body>
+    <canvas id="game"></canvas>
+    <div id="hud"></div>
+    <div id="start-screen" class="screen"></div>
+    <div id="result-screen" class="screen"></div>
 
     <!-- Engine (do not modify) -->
     <script src="store/store.js"></script>
 
-    <!-- Config — add <script> tags here as config files are created -->
+    <!-- Config -->
+    <script src="config/balance.js"></script>
+    <script src="config/adaptations.js"></script>
+    <script src="config/strings.js"></script>
+    <script src="config/world.js"></script>
 
-    <!-- Systems — add <script> tags here as system files are created -->
+    <!-- Systems -->
+    <script src="systems/worldSystem.js"></script>
+    <script src="systems/sessionSystem.js"></script>
+    <script src="systems/playerSystem.js"></script>
+    <script src="systems/foodSystem.js"></script>
+    <script src="systems/npcSystem.js"></script>
+    <script src="systems/predatorSystem.js"></script>
 
-    <!-- UI — add <script> tags here as UI files are created -->
+    <!-- Rendering (visual only) -->
+    <script src="render/camera.js"></script>
+    <script src="render/terrain.js"></script>
+    <script src="render/plants.js"></script>
+    <script src="render/creatures.js"></script>
+    <script src="render/renderer.js"></script>
+
+    <!-- UI -->
+    <script src="ui/inputHandler.js"></script>
+    <script src="ui/hud.js"></script>
+    <script src="ui/startScreen.js"></script>
+    <script src="ui/resultScreen.js"></script>
 
     <!-- Entry point (must be last) -->
     <script src="main.js"></script>
-
 </body>
 </html>

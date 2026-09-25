@@ -1,3 +1,17 @@
+# Paleo Microhabitat (prototype)
+
+A small browser game about being a tiny creature in an ancient humid habitat that keeps living without you. A 75-second experiment: pick one trait, survive, compare. Built on the Web Game Template below. Design: [`DESIGN.md`](DESIGN.md). Tasks: [`TODO.md`](TODO.md).
+
+- **Play:** double-click `src/index.html` (works from `file://`, no server, no install).
+- **Controls:** WASD / arrow keys to move. `R` restarts. Enter / Space starts from the menu.
+- **Tests:** open `tests/index.html` in a browser, or run `node tests/run-node.js`.
+- **Tuning:** every gameplay number is in [`src/config/balance.js`](src/config/balance.js) (e.g. `PREDATOR_SPEED`, `SESSION_DURATION`). Layout of landmarks, shelters and food: `src/config/world.js`. Trait effects: `src/config/adaptations.js`. Text: `src/config/strings.js`.
+- **Debug view:** open `src/index.html?debug` to see predator state, target and detection range.
+- **Architecture:** `systems/` = simulation (one file per state slice), `render/` = drawing only (procedural Canvas 2.5D; replace drawers in `render/creatures.js` with sprites later), `ui/` = HUD, screens and input. `main.js` runs the fixed-step loop and dispatches events queued by systems.
+- **Assets:** none. All art is drawn in code; no third-party material.
+
+---
+
 # Web Game Template for Coding Agent-Assisted Development
 
 A project template for building browser games with the help of a coding agent. Use any agent-enabled editor or CLI that can read and edit files in a local project folder. You describe the game — the agent writes the design doc, plans the tasks, implements the code, and tests it, all within strict architecture and design rules baked into the repo.
