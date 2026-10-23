@@ -40,7 +40,7 @@
         }
         var removed=[0,1].map(function(owner){return g.tiles.filter(function(cell){return cell.chips[owner]!==null&&copy.tiles[cell.id].chips[owner]===null}).map(function(cell){return cell.id})})
         var after=[gardenRules.preview(copy,0),gardenRules.preview(copy,1)]
-        return {reason:'',attack:attack,defense:defense,outcome:outcome,target:id,tiles:copy.tiles,removed:removed,reserveDelta:[0,1].map(function(owner){return gardenRules.reserve(copy,owner)-reserves[owner]}),harvestBefore:before.map(function(v){return v.score}),harvestAfter:after.map(function(v){return v.score}),harvestReadyBefore:before.map(function(v){return v.eligible}),harvestReadyAfter:after.map(function(v){return v.eligible})}
+        return {reason:'',attack:attack,defense:defense,outcome:outcome,target:id,newClaim:t.chips[p]===null,tiles:copy.tiles,removed:removed,reserveDelta:[0,1].map(function(owner){return gardenRules.reserve(copy,owner)-reserves[owner]}),harvestBefore:before.map(function(v){return v.score}),harvestAfter:after.map(function(v){return v.score}),harvestReadyBefore:before.map(function(v){return v.eligible}),harvestReadyAfter:after.map(function(v){return v.eligible})}
     }
     window.gardenConflict={role:role,fighter:fighter,reason:reason,preview:preview}
 })()
