@@ -12,7 +12,7 @@
         roles: [
             {name:'Коренник',icon:'🛡',rule:'+1 в защите',bonus:1},
             {name:'Задира',icon:'🥊',rule:'+1 в атаке',bonus:1},
-            {name:'Плевун',icon:'💨',rule:'+1 на споровом гексе',bonus:1},
+            {name:'Плевун',icon:'💨',rule:'+1, если бой на спорах',bonus:1},
             {name:'Дикарь',icon:'🍄',rule:'Без бонуса типажа',bonus:0}
         ],
         cards: {
