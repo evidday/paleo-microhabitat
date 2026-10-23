@@ -1,0 +1,3 @@
+global.window=global;global.document={getElementById:()=>null,title:''};
+require('../src/store/store.js');require('../src/config/colony.js');require('../src/systems/battleSystem.js');require('../src/systems/colonySystem.js');require('./helpers.js');require('./test-store.js');require('./test-colony.js');require('../src/ui/lowPolyGL.js');require('./test-scene.js');require('./test-battle-evidence.js');require('./test-tiers.js');require('./test-encounters.js');require('../src/ui/combatRig.js');require('./test-systems-rig.js');
+const failed=TestRunner.results.filter(r=>!r.pass);console.log(TestRunner.results.length+' checks, '+failed.length+' failed');failed.forEach(r=>console.error(r.message));process.exitCode=failed.length?1:0;

@@ -1,0 +1,7 @@
+// Small deterministic pose rig: accessories are attached to the hands, not animated independently.
+;(function(){'use strict';function clamp(n){return Math.max(0,Math.min(1,n))}function attack(t,active){if(!active)return 0;if(t<.2)return 0;if(t<.76){var p=clamp((t-.2)/.56);return p*p*(3-2*p)}return 1-clamp((t-.76)/.24)}
+function pose(p){var rank=1+((p.tier||1)-1)*.12,scale=p.scale===undefined?1:p.scale,roll=p.roll||0,yaw=p.yaw||0;function point(v){var x=v[0]*.7*rank,y=v[1]*.8*rank,z=v[2]*.7*rank,rx=x*Math.cos(roll)-y*Math.sin(roll),ry=x*Math.sin(roll)+y*Math.cos(roll);return [p.x+(rx*Math.cos(yaw)+z*Math.sin(yaw))*scale,p.y+.06+ry*scale,p.z+(z*Math.cos(yaw)-rx*Math.sin(yaw))*scale]}
+var hands=[],elbows=[],shoulders=[],walk=p.moving&&!p.reduced?Math.sin(p.phase*12)*.07:0,strike=p.strike||0;
+[-1,1].forEach(function(side,i){var use=p.role===1?side===(p.step%2?1:-1):p.role===0?side===-1:side===1,reach=use?strike*.58:0;var hand=[side*.36,.43+(use?strike*.1:0),.18+reach+walk*side],elbow=[side*(.37-reach*.12),.52,.04+reach*.4];shoulders.push(point([side*.21,.67,.04]));elbows.push(point(elbow));hands.push(point(hand))});return {shoulders:shoulders,elbows:elbows,hands:hands,scale:scale*rank}}
+function bone(a,b){var dx=b[0]-a[0],dy=b[1]-a[1],dz=b[2]-a[2];return {length:Math.hypot(dx,dy,dz),yaw:Math.atan2(-dz,dx),roll:Math.atan2(Math.hypot(dx,dz),-dy)}}
+window.combatRig={attack:attack,pose:pose,bone:bone};})()

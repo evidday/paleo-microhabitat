@@ -1,45 +1,84 @@
-# TODO — Paleo Microhabitat
+# План первой версии — реализовано
 
-Refs: `D§n` = section of DESIGN.md. Mark `[x]` when done. Each task keeps the game runnable (`src/index.html` via file:///) and passes all tests.
+- [x] Конфигурация карты, цен, колоний и реплик (DESIGN 2–5; src/config/colony.js, colony.js (config.strings)).
+- [x] Игровой срез: генерация, два владельца, соседство, строительство и обмен (DESIGN 3–4, 7; src/systems/colonySystem.js).
+- [x] Передача хода, сбор, раунды и определение результата (DESIGN 4; тот же системный файл).
+- [x] Объёмное векторное поле и сердитые low-poly грибы (DESIGN 2, 6; src/ui/art.js, styles.css).
+- [x] Панели обеих колоний, цены, причины блокировок, перепалки и экран передачи (DESIGN 5–6; src/ui/game.js, src/index.html).
+- [x] Подключение систем и интерфейса, очистка подписок (DESIGN 8; src/main.js).
+- [x] Тесты экономики, смены игрока, финала и воспроизведения; браузерная проверка, проверка последовательности действий (баланс требует тестов с людьми), обновление README и .gitignore (DESIGN 8; tests/).
 
-## Group A — Foundation
-- [x] A1. Delete unused `src/config/figures.js`; create `config/balance.js` (all tunables, D§16), `config/adaptations.js` (D§12), `config/strings.js`. Files: config/*, index.html
-- [x] A2. `config/world.js`: hand-authored layout of 4 zones, 3 landmarks, shelters, obstacles, wet ground, food spots, sizes per D§18–19. 
-- [x] A3. `systems/worldSystem.js` (slice `world`): seeded jitter, builds static layout into state; helper queries (inShelter, inWet, obstacle push-out). Tests.
-- [x] A4. `systems/sessionSystem.js` (slice `session`): phase menu/running/ended, timer, START_RUN, SELECT_ADAPTATION, RESTART, RUN_WON, seed handling. Tests: timer win, restart new seed.
-- [x] A5. `main.js`: fixed-step loop, pending-flag → dispatch drain, system orchestration, seed via Date.now().
 
-## Group B — Rendering foundation (first visual check)
-- [x] B1. `render/camera.js`: smooth follow, world↔screen, Y-compression, parallax layers.
-- [x] B2. `render/` terrain + static prerender: ground, wet ground, puddle, bark, rocks; zone tonal variation.
-- [x] B3. `render/` plants: lycopod/fern/horsetail stems, leaf canopies (shelters), depth sort, foreground occlusion fade.
-- [x] B4. Placeholder creature drawers (player, NPC, predator, food) with procedural leg animation, shared style. Signature `(ctx, entity, t)`.
-- [x] B5. **Scale checkpoint:** open in browser, screenshot, verify tiny-player feel before continuing.
+## Итерация v0.2 — реализована
 
-## Group C — Player and needs
-- [x] C1. `ui/inputHandler.js` + `SET_INPUT` (dispatch only on change, WASD/arrows, R).
-- [x] C2. `systems/playerSystem.js` (slice `player`): movement, obstacle collision, sheltered flag, heading. Tests: adaptation speed effects.
-- [x] C3. Energy and hydration drain, humidity factor, death causes (STARVED, DRIED OUT). Tests: items 1,3,4,5,6,8,15,16.
-- [x] C4. `systems/foodSystem.js` (slice `food`): items, eat by contact, regrow, `EAT_FOOD`. Wet-ground hydration restore. Tests: food restores energy.
+- [x] Согласовать DESIGN §9: домашние зоны, пять центральных гексов, подготовка и автобой.
+- [x] Заменить экономический цикл и условия победы; обновить связанные старые разделы DESIGN, README и подсказки.
+- [x] Добавить роли бойцов, постоянный состав и бесплатную расстановку до 5 бойцов на отдельном ринге 7 × 5.
+- [x] Реализовать детерминированную боевую симуляцию, пути, одновременный урон, таймер, ничьи и награды.
+- [x] Добавить боевой экран, состояние здоровья, передачу подготовки, итог боя и контроль центра.
+- [x] Проверить симметрию стартов, отсутствие двойных наград, восстановление проекций, воспроизводимость, полный цикл партии и интерфейс.
 
-## Group D — Ecosystem
-- [x] D1. `systems/npcSystem.js` (slice `npcs`): WANDER/SEEK_FOOD/EAT/FLEE/SEEK_SHELTER, steering, pauses, `NPC_DIED`, migration. Tests: NPC dies, NPCs move with player idle.
-- [x] D2. `systems/predatorSystem.js` (slice `predator`): state machine, waypoints weighted to food, general targeting function D§7.1, scan, stickiness, lose-target, catch flags. 
-- [x] D3. Predator tests: considers NPC, considers player, not always player, shelter and camouflage change range, player-death-from-predator (items 7,9–12,14).
-- [x] D4. Cues: readable predator poses per state, NPC flee reaction, shadow, foliage shake, vignette pulse.
-- [x] D5. **First ugly playable checkpoint** (brief §66): full loop works. Run headless simulation with player idle over several seeds to confirm predator picks NPCs in some runs and player in others; record stats.
+## Одобренная итерация v0.2
+- [x] Конфигурация ролей, питания, фракций, текста и цен (DESIGN: экономика/фракции).
+- [x] Чистая симуляция боя и кадры (DESIGN: ринг).
+- [x] Экономика, подготовка, питание, размещение, результат (DESIGN: цикл).
+- [x] Мицелий, грибы фракций, расстановка, бой, понятный обмен (DESIGN: представление).
+- [x] Тесты и прогон полной партии, обновление README.
 
-## Group E — UI
-- [x] E1. `ui/hud.js` (minimal bars, timer, trait, hidden/exposed, first-6-seconds hint).
-- [x] E2. `ui/startScreen.js` (trait cards, humidity, START, preselected trait, live world behind).
-- [x] E3. `ui/resultScreen.js` (D§25 fields, TRY AGAIN, CHANGE ADAPTATION, instant restart).
+- [x] Процедурный декор/зеркальные ресурсы по seed, смена seed, полевой атлас и контрастный HUD по новым референсам.
+- [x] Проверено: 127 утверждений, браузерный полный матч, 390px экран и скриншоты. Баланс требует человеческого теста.
 
-## Group F — Tests, tuning, polish
-- [x] F1. Full-run determinism/replay test (item 18). Update `tests/index.html` for all files. Run in Node and browser.
-- [x] F2. First balance pass to hit: predator encounter ~15–25 s, 75 s runs, each trait viable.
-- [x] F3. Visual coherence pass (brief §59/§70): landmarks, shelter darkness, atmosphere, HUD subordinate. Optional procedural ambience.
-- [x] F4. Browser validation checklist (brief §57), console clean, frame-rate check.
-- [x] F5. README project section, `.gitignore`, git commits by category.
+## Итерация v0.3 — одобрена прямым запросом на 3D
+- [x] Нативный WebGL-рендерер, объёмные примитивы, освещение и камера.
+- [x] Процедурная диорама, четыре модели фракций, роли, разрастание и живые детали.
+- [x] Интеграция выбора, подписей, поворота/масштаба, доступности и fallback.
+- [x] Визуальный прогон, проверки экономики, мобильного экрана и полный матч.
 
-## Later (not started until approved)
-- Deployment to static hosting (brief §73–76).
+## Итерация v0.4 — одобрена запросом на 3D-автобой
+- [x] Добавить решения/цели/попадания и доказательный итог в чистую симуляцию.
+- [x] Расширить общий WebGL-рендер поворотом моделей, подключить сцену боя на той же поляне.
+- [x] Бег, замахи, снаряды, HP, выбор бойца, линии целей и боевой журнал.
+- [x] Пауза, шаг, скорость, повтор, reduced-motion и fallback.
+- [x] Тесты причинности, просмотр и полный матч в браузере, мобильная проверка, документация.
+
+## Итерация v0.5
+- [x] Ресурсные SVG-иконки, ясные цены и объяснение споровых проекций.
+- [x] Toon-освещение, контур, новая палитра и мультяшные модели.
+- [x] Постоянные T1/T2/T3, оплата повышения, характеристики и внешний вид.
+- [x] Мобильные панели, крупные кнопки, pinch-zoom и безопасные отступы.
+- [x] Автоматические и браузерные проверки, touch и полный матч.
+
+- [x] Конфигуратор по мудборду, крупная камера лица, боксёрские перчатки, болтающиеся руки, очистка грунта/корней, крупные декоративные знаки и сокращение капса/микроподписей.
+
+## Итерация v0.6 — SMASH ROOM
+- [x] Название, постоянная цель/награда колодца и объяснение источников.
+- [x] Детерминированные встречи и защищённый однократный выбор награды.
+- [x] Плавная передача на той же сцене, фазы и reduced-motion.
+- [x] Гость, источник и малыши с грузом в 3D.
+- [x] Читаемые активные удары и командные основания.
+- [x] Тесты встреч, replay, мобильного цикла и прежних механик.
+
+- [x] Исправлены модели глаз/масштаб малышей, общий риг рук и экипировки, HUD вместо карточек, биомы/урожайность/фракционные преимущества, seeded-внешность и пассивный доход колодца.
+- [x] Передача сохраняет тот же layout/canvas/camera; общий сдвиг страницы убран.
+
+## Итерация v0.7
+- [x] Полноэкранная сцена с HUD поверх, browser fullscreen и мобильный режим.
+- [x] Постоянная сеть мицелия и читаемые показатели преимуществ всех источников.
+- [x] Anime split-screen с 3D-лидерами, пропуском и reduced-motion.
+- [x] Проверка экранов, формул, ввода и полного матча.
+
+## v0.8 — ясное пространственное ядро (прямой запрос на реализацию)
+- [x] Аудит фактических правил, выбор одного цикла, сохранение старого запуска.
+- [x] Чистая система сети/запаса/очков/спорных участков и завершения.
+- [x] Три действия и предпросмотр, краткие правила, повтор партии.
+- [x] Переиспользовать 3D-модели/рендер с поддержкой общей территории и видимого мицелия.
+- [x] Тесты полного цикла, границ/повторов и отсутствия тупиков; симуляции стратегий.
+- [x] Браузерная проверка desktop/touch/fallback и отчёт плейтеста.
+
+
+## v0.9 — простой бот и замена опубликованной игры (прямой запрос)
+- [x] Документировать одиночный режим и одинаковые правила, добавить выбор режима.
+- [x] Чистая эвристика бота и последовательность его хода, видимая причина, автоматический возврат человеку.
+- [x] Проверить правила/бота/replay, полный browser-матч и режим на двоих.
+- [x] Найти опубликованный репозиторий и сохранить прежний HEAD локально до изменений.
+- [x] Подготовить новую игру в этом репозитории, проверить и опубликовать без перезаписи истории.

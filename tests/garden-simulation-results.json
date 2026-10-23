@@ -1,0 +1,138 @@
+{
+  "config": {
+    "stock": 8,
+    "target": 11,
+    "harvestBonus": 1,
+    "fertileBonusCap": 1
+  },
+  "calibration": [
+    {
+      "policies": [
+        "short",
+        "long"
+      ],
+      "seeds": [
+        1,
+        100
+      ],
+      "games": 200,
+      "wins": [
+        106,
+        92
+      ],
+      "draws": 2,
+      "stuck": 0,
+      "invalid": 0,
+      "meanPlies": 22.26,
+      "meanHarvests": 3.445,
+      "meanContestedPlacements": 1.065
+    },
+    {
+      "policies": [
+        "short",
+        "flex"
+      ],
+      "seeds": [
+        1,
+        100
+      ],
+      "games": 200,
+      "wins": [
+        72,
+        109
+      ],
+      "draws": 19,
+      "stuck": 0,
+      "invalid": 0,
+      "meanPlies": 21.25,
+      "meanHarvests": 3.9,
+      "meanContestedPlacements": 1.21
+    },
+    {
+      "policies": [
+        "long",
+        "flex"
+      ],
+      "seeds": [
+        1,
+        100
+      ],
+      "games": 200,
+      "wins": [
+        83,
+        116
+      ],
+      "draws": 1,
+      "stuck": 0,
+      "invalid": 0,
+      "meanPlies": 22.79,
+      "meanHarvests": 3.35,
+      "meanContestedPlacements": 1.925
+    }
+  ],
+  "holdout": [
+    {
+      "policies": [
+        "short",
+        "long"
+      ],
+      "seeds": [
+        101,
+        200
+      ],
+      "games": 200,
+      "wins": [
+        108,
+        91
+      ],
+      "draws": 1,
+      "stuck": 0,
+      "invalid": 0,
+      "meanPlies": 21.99,
+      "meanHarvests": 3.435,
+      "meanContestedPlacements": 1.06
+    },
+    {
+      "policies": [
+        "short",
+        "flex"
+      ],
+      "seeds": [
+        101,
+        200
+      ],
+      "games": 200,
+      "wins": [
+        71,
+        110
+      ],
+      "draws": 19,
+      "stuck": 0,
+      "invalid": 0,
+      "meanPlies": 20.86,
+      "meanHarvests": 3.91,
+      "meanContestedPlacements": 1.225
+    },
+    {
+      "policies": [
+        "long",
+        "flex"
+      ],
+      "seeds": [
+        101,
+        200
+      ],
+      "games": 200,
+      "wins": [
+        85,
+        114
+      ],
+      "draws": 1,
+      "stuck": 0,
+      "invalid": 0,
+      "meanPlies": 22.55,
+      "meanHarvests": 3.365,
+      "meanContestedPlacements": 1.905
+    }
+  ]
+}

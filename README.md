@@ -1,122 +1,35 @@
-# Paleo Microhabitat (prototype)
+# SMASH ROOM — вырастить и собрать (v0.9)
 
-A small browser game about being a tiny creature in an ancient humid habitat that keeps living without you. A 75-second experiment: pick one trait, survive, compare. Built on the Web Game Template below. Design: [`DESIGN.md`](DESIGN.md). Tasks: [`TODO.md`](TODO.md).
+Откройте `src/index.html` в современном браузере: без установки, сервера и загрузок из сети. По умолчанию выбрано «Против бота»: вы играете первой колонией, соперник ходит автоматически и объясняет решение. Режим «Вдвоём на одном устройстве» сохраняет передачу и кнопку «Мой ход».
 
-- **Play:** double-click `src/index.html` (works from `file://`, no server, no install).
-- **Controls:** WASD / arrow keys to move. `R` restarts. Enter / Space starts from the menu.
-- **Tests:** open `tests/index.html` in a browser, or run `node tests/run-node.js`.
-- **Tuning:** every gameplay number is in [`src/config/balance.js`](src/config/balance.js) (e.g. `PREDATOR_SPEED`, `SESSION_DURATION`). Layout of landmarks, shelters and food: `src/config/world.js`. Trait effects: `src/config/adaptations.js`. Text: `src/config/strings.js`.
-- **Debug view:** open `src/index.html?debug` to see predator state, target and detection range.
-- **Architecture:** `systems/` = simulation (one file per state slice), `render/` = drawing only (procedural Canvas 2.5D; replace drawers in `render/creatures.js` with sprites later), `ui/` = HUD, screens and input. `main.js` runs the fixed-step loop and dispatches events queued by systems.
-- **Assets:** none. All art is drawn in code; no third-party material.
+Растите по общей поляне к трём биомам, выбирая момент урожая. У каждого восемь возвращаемых фишек: за ход можно поставить одну рядом со своей сетью, собрать всю сеть или свернуть её край. Цель — 11 очков с равным числом ходов у соперников.
 
----
+## Правила
 
-# Web Game Template for Coding Agent-Assisted Development
+- **Разрастись:** одна фишка из запаса на соседний участок. Свои фишки соединены с постоянной базой.
+- **Плодоносить:** нужны минимум три фишки и все три биома — влажная низина, перегной, споровые заросли. Очки: по одному за неспорную фишку, +1 за урожай, ещё +1 за наличие неспорной золотой поляны. Несколько золотых полян не умножают бонус. Вся своя сеть возвращается в запас; база остаётся.
+- **Свернуть край:** вернуть одну фишку без очков, сохранив связь остальных с базой.
 
-A project template for building browser games with the help of a coding agent. Use any agent-enabled editor or CLI that can read and edit files in a local project folder. You describe the game — the agent writes the design doc, plans the tasks, implements the code, and tests it, all within strict architecture and design rules baked into the repo.
+На одном участке может находиться по одной фишке обоих игроков. Он становится спорным: биом учитывается, очки и золотой бонус не даёт. Когда сосед соберёт урожай или уйдёт, участок снова ценен полностью. Ни одна колония не может поставить фишку на чужую базу.
 
-## New to Coding Agents?
+Предпросмотр показывает готовность урожая, недостающие биомы, точные очки и возврат фишек. HUD показывает потенциальный урожай обоих игроков. После достижения 11 соперник получает один ответ, если сделал меньше ходов; затем сравниваются очки. При равенстве — ничья. Через 24 хода каждого партия завершается по счёту в любом случае.
 
-If you have little or no technical background, start with the [Workshop Console](https://ludenio.github.io/WebGameTemplateForAgents/) — an interactive page that builds every prompt for you and tracks your progress with a checklist — or read [`AGENTS_WORKSHOP_GUIDE.md`](AGENTS_WORKSHOP_GUIDE.md), a beginner-friendly step-by-step walkthrough from a first idea to a playable browser game link.
+## Как попробовать разные планы
 
-The guide is written for people who are just getting comfortable with AI agents and want to understand the workflow without needing to read code first.
+Частые сборы по 3–4 фишки быстро дают очки и освобождают запас. Длинная сеть по 6–8 фишек доходит до золотых полян и экономит действия сбора, но дольше остаётся уязвимой. Можно следить за урожаем соседа и занимать его ценные участки, однако каждый такой ход откладывает собственный урожай.
 
-## How It Works
+Четыре фракции в этом режиме различаются внешностью; правила одинаковы. Возраст слегка увеличивает удерживаемый узел визуально. Seed меняет зеркальную карту и внешность. Три соседних с каждой базой гекса гарантируют все три биома. Перетаскивание вращает поле, колесо/pinch и кнопки меняют масштаб; есть выбор участков списком и режим без WebGL.
 
-1. Get the template: download the [ZIP](https://github.com/ludenio/WebGameTemplateForAgents/archive/refs/heads/main.zip) and extract it, clone the repo, or click **Use this template** on GitHub
-2. Open the folder in an agent-enabled editor or CLI
-3. Build your first prompt in the [Workshop Console](https://ludenio.github.io/WebGameTemplateForAgents/) (**New game prompt** tab) — or open `FIRST_PROMPT.md` and write your game concept in the placeholder
-4. Copy the prompt into the agent chat
-5. The coding agent reads the rules and follows a 4-phase workflow:
+## Проверки и история
 
-| Phase | What happens | Output |
-|-------|-------------|--------|
-| 1. Design | Agent writes a game design document | `DESIGN.md` |
-| 2. Planning | Agent creates an ordered task list | `TODO.md` |
-| 3. Implementation | Agent builds the game task by task | `src/` |
-| 4. Testing | Agent writes tests, fixes failures until all pass | `tests/` |
+- `node tests/run-garden-bot.cjs` — чистота/легальность бота, 400 полных партий и replay.
+- `node tests/run-garden.cjs` — 12 наборов проверок правил, очков, возврата, связности, окончания и replay.
+- `node tests/simulate-garden.cjs` — 1200 завершённых пробных партий простых эвристик. Методика, результаты и ограничения: [PLAYTEST.md](PLAYTEST.md).
+- `node tests/run-colony.cjs` — 650 прежних проверок, все проходят.
+- `tests/garden-browser-check.cjs` — локальный Edge/Playwright-прогон UI, мобильного размера и fallback; использует установленный Playwright или bundled runtime Codex. `tests/garden-bot-browser-check.cjs` проверяет одиночный матч.
 
-The coding agent checks every change against the architecture and design rules. If your request would violate a rule, it warns you and proposes alternatives before writing any code.
+Предыдущий эксперимент с экономикой, армией и автобоем сохранён в `src/legacy.html`; ссылка есть на стартовом экране. Его описание: [DESIGN-v07.md](DESIGN-v07.md). Аудит до изменений: [AUDIT.md](AUDIT.md). Текущая спецификация: [DESIGN.md](DESIGN.md).
 
-For subsequent changes (new features, balance tweaks, mechanic removals), use the console's **Change prompt** tab or `NEXT_ITERATION_PROMPT.md` — it ensures the agent updates `DESIGN.md` first, then plans and implements, rather than jumping straight to code.
+Сохранены собственный WebGL-рендер, мультяшные модели, seed и store. Новый основной режим находится в `src/core/`. Основа проекта — [ludenio/WebGameTemplateForAgents](https://github.com/ludenio/WebGameTemplateForAgents), MIT; лицензия в LICENSE. Сторонние игровые изображения не используются.
 
-## What's Inside
-
-```
-├── AGENTS.md                # Coding agent rules: workflow, guard behavior, coding standards
-├── AGENTS_WORKSHOP_GUIDE.md # Beginner-friendly workshop guide for learning the agent workflow
-├── ARCHITECTURE.md          # Code architecture: store API, patterns, file structure
-├── DESIGN_RULES.md          # Game design principles: balance, UX, progression, etc.
-├── FIRST_PROMPT.md          # Template: first message to the agent (new game)
-├── NEXT_ITERATION_PROMPT.md # Template: subsequent messages (changes, new features)
-├── src/
-│   ├── index.html       # Entry point — open in browser (works via file:///)
-│   ├── main.js          # Game loop skeleton
-│   └── store/
-│       └── store.js     # State management engine (don't modify)
-└── tests/
-    ├── index.html       # Test runner — open in browser
-    ├── helpers.js        # Minimal test framework (assert, assertEqual)
-    └── test-store.js     # Store engine tests (28 tests)
-```
-
-**Rules** (permanent, define standards):
-- `AGENTS.md` — how the coding agent should work: 4-phase workflow, guard behavior that blocks rule-violating changes, coding conventions
-- `ARCHITECTURE.md` — Mutable UDF + Deterministic Lockstep: one mutable state object, dispatched events logged for replay, continuous simulation on every tick
-- `DESIGN_RULES.md` — 9 game design principles: intuitive affordances, emergent gameplay, wave-like difficulty, player agency, PEGI 7 compliance, etc.
-
-**Generated per game** (created by the agent):
-- `DESIGN.md` — game design document for your specific game
-- `TODO.md` — implementation task list
-
-## Key Constraints
-
-- **No server required.** The game runs by opening `src/index.html` directly via `file:///` in any modern browser. No build tools, no npm, no bundlers.
-- **No ES modules.** Files use IIFEs and `window` globals instead of `import`/`export` (ES modules require an HTTP server due to CORS).
-- **Deterministic replay.** All randomness goes through a seeded PRNG (`store.prng.next()`). `Math.random()` is forbidden. Game sessions can be saved and replayed identically.
-- **Pure state.** `store.state` contains only plain serializable data (numbers, strings, booleans, objects, arrays). No DOM refs, no class instances.
-
-## Architecture at a Glance
-
-```
-User Input → store.dispatch(type, payload)
-           → logged in store.history
-           → handler mutates store.state
-           → subscribers notified → UI updates
-```
-
-Two kinds of state changes, kept strictly separate:
-
-| Kind | How | Logged? | Use for |
-|------|-----|---------|---------|
-| Discrete events | `store.dispatch()` | Yes | inputs, spawns, deaths |
-| Continuous simulation | `system.update(state, dt)` | No | movement, physics, AI |
-
-## Running Tests
-
-Open `tests/index.html` in a browser (works via `file:///`). All results display on the page.
-
-Or run via Node.js:
-
-```bash
-node -e "
-globalThis.window = globalThis;
-globalThis.document = { getElementById: function() { return null }, title: '' };
-require('./src/store/store.js');
-require('./tests/helpers.js');
-require('./tests/test-store.js');
-var r = TestRunner.results, p = 0, f = 0;
-r.forEach(function(t) { t.pass ? p++ : (f++, console.log('FAIL:', t.message)); });
-console.log(p + ' passed, ' + f + ' failed');
-process.exit(f);
-"
-```
-
-## Other workshops
-
-Comfortable with agents already? The [Ship Loop workshop](https://ludenio.github.io/ShipLoopWorkshop/) is a 60-minute session for experienced developers. Together you grow a simple agent workflow into a production-ready loop.
-
-## License
-
-MIT
+Опубликованная игра: https://evidday.github.io/paleo-microhabitat/ . Репозиторий: https://github.com/evidday/paleo-microhabitat . Предыдущий Paleo Microhabitat сохранён локально до замены; его коммиты остаются в истории Git.
