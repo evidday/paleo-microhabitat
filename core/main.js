@@ -7,15 +7,20 @@
     gardenSystem.init()
     gardenView.init()
     gardenUI.mount()
+    gardenHand.mount()
 
     var timer = null
     var stopped = false
+    var scheduleKey = ''
     function schedule() {
-        clearTimeout(timer)
         var g = store.state.garden
+        var nextKey=[g.mode,g.phase,g.active,g.ply,JSON.stringify(g.botPlan)].join(':')
+        if(nextKey===scheduleKey)return
+        scheduleKey=nextKey
+        clearTimeout(timer)
         if (stopped || g.mode !== 'solo' || g.phase === 'over') return
         if (g.phase === 'handoff') {
-            timer = setTimeout(function() { store.dispatch('GARDEN_BEGIN') }, g.lastAction&&g.lastAction.skirmish?gardenConfig.skirmishMs:gardenConfig.bot.handoffMs)
+            timer = setTimeout(function() { store.dispatch('GARDEN_BEGIN') }, g.lastAction&&g.lastAction.skirmish?gardenConfig.combat.introMs+gardenConfig.skirmishMs:gardenConfig.bot.handoffMs)
         } else if (g.phase === 'play' && g.active === 1) {
             if (!g.botPlan) {
                 timer = setTimeout(function() {
@@ -25,7 +30,7 @@
             } else {
                 timer = setTimeout(function() {
                     var plan = store.state.garden.botPlan
-                    if (plan) store.dispatch(plan.type, plan.id === null ? undefined : { id: plan.id })
+                    if (plan) store.dispatch(plan.type, Object.assign({},plan))
                 }, gardenConfig.bot.showMs)
             }
         }
