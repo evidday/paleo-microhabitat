@@ -1,4 +1,4 @@
-const fs=require('fs');global.window=global;require('../src/store/store.js');require('../src/config/colony.js');require('../src/core/config.js');require('../src/core/gardenSystem.js');
+const fs=require('fs');global.window=global;require('../src/store/store.js');require('../src/config/colony.js');require('../src/core/config.js');require('../src/core/gardenMaps.js');require('../src/core/gardenSystem.js');
 function hex(a,b){return Math.max(Math.abs(a.q-b.q),Math.abs(a.r-b.r),Math.abs(a.q+a.r-b.q-b.r))}
 function choose(g,kind){
  const p=g.active,plan=gardenRules.preview(g,p),target=kind==='short'?4:kind==='long'?7:5;

@@ -15,7 +15,7 @@
         var g = store.state.garden
         if (stopped || g.mode !== 'solo' || g.phase === 'over') return
         if (g.phase === 'handoff') {
-            timer = setTimeout(function() { store.dispatch('GARDEN_BEGIN') }, gardenConfig.bot.handoffMs)
+            timer = setTimeout(function() { store.dispatch('GARDEN_BEGIN') }, g.lastAction&&g.lastAction.skirmish?gardenConfig.skirmishMs:gardenConfig.bot.handoffMs)
         } else if (g.phase === 'play' && g.active === 1) {
             if (!g.botPlan) {
                 timer = setTimeout(function() {

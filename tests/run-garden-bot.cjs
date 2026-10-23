@@ -3,7 +3,7 @@ global.window = global;
 require('../src/store/store.js');
 require('../src/config/colony.js');
 require('../src/core/config.js');
-require('../src/core/gardenSystem.js');
+require('../src/core/gardenMaps.js');require('../src/core/gardenSystem.js');
 require('../src/core/gardenBot.js');
 let suites = 0;
 function check(name, fn) { fn(); suites++; console.log('PASS ' + name); }
@@ -48,8 +48,8 @@ check('bot harvests at target length and when harvest can reach goal',()=>{
     let g=init();store.dispatch('GARDEN_BEGIN');let p=g.active;
     let near=g.tiles.filter(t=>gardenRules.adjacent(t,g.tiles[g.bases[p]]));near.forEach(t=>t.chips[p]={born:0});
     g.players[p].score=7;assert.equal(gardenBot.choose(g).type,'GARDEN_HARVEST');
-    g.players[p].score=0;assert.equal(gardenBot.choose(g).type,'GARDEN_GROW');
-    near[0].chips[1-p]={born:0};assert.equal(gardenBot.choose(g).type,'GARDEN_HARVEST');
+    g.players[p].score=0;g.botStyle='long';assert.equal(gardenBot.choose(g).type,'GARDEN_GROW');
+    near.forEach(t=>t.chips[1-p]={born:0});assert.equal(gardenBot.choose(g).type,'GARDEN_HARVEST');
 });
 check('400 full bot-driven games: legal moves, stock, connectivity, bounded end',()=>{
     for(let seed=1;seed<=400;seed++){

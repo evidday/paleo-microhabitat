@@ -9,10 +9,10 @@
     function choose(g) {
         var p = g.active
         var plan = gardenRules.preview(g, p)
-        var cfg = gardenConfig.bot
+        var cfg = gardenConfig.bot.styles[g.botStyle] || gardenConfig.bot.styles.short
         var goal = gardenConfig.target - g.players[p].score
-        if (plan.eligible && (plan.score >= goal || plan.count >= cfg.harvestSize || plan.conflicts.length > 0)) {
-            return { type: 'GARDEN_HARVEST', reason: plan.score >= goal ? 'Этот урожай доводит меня до цели.' : plan.conflicts.length ? 'Сосед спорит с сетью — собираю, пока она приносит очки.' : 'Сеть выросла: собираю и возвращаю фишки.' }
+        if (plan.eligible && (plan.score >= goal || plan.count >= cfg.harvestSize || plan.conflicts.length >= cfg.retreatAt)) {
+            return { type: 'GARDEN_HARVEST', reason: plan.score >= goal ? 'Этот урожай доводит меня до цели. Корзину победителю!'  : plan.conflicts.length >= cfg.retreatAt ? 'Сосед спорит с сетью — собираю, пока есть очки. Эти нервы не входят в урожай.' : g.botStyle==='long' ? 'Семь фишек — пора собирать. Размер имеет мицелий.' : 'Три биома готовы — собираю маленький урожай. Жадность пусть растит сосед.' }
         }
 
         var legal = gardenRules.actions(g, p)
@@ -26,7 +26,7 @@
                 type: a.type,
                 id: a.id,
                 value: (missing ? cfg.missingBiome : 0) + (t.fertile ? cfg.fertility : 0) - near * cfg.approach + (shared ? cfg.contest : 0),
-                reason: missing ? 'Добираю биом: ' + gardenConfig.biomes[t.type] + '.' : t.fertile ? 'Занимаю плодородную поляну ради бонуса.' : shared ? 'Оспариваю участок соседа: он перестанет давать нам очки.' : 'Удлиняю сеть к плодородным полянам.'
+                reason: missing ? 'Добираю биом: ' + gardenConfig.biomes[t.type] + '.' : t.fertile ? 'Занимаю плодородную поляну ради бонуса.' : shared ? 'Оспариваю участок соседа: он перестанет давать нам очки.' : (g.botStyle==='long'?'Расту к золотым полянам. Центр — мой. Сосед ещё не в курсе.':'Подбираю место для быстрого урожая. Я не мелочный, я скороспелый.')
             }
         })
         growth.sort(function(a, b) { return b.value - a.value || a.id - b.id })

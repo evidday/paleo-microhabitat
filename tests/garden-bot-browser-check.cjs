@@ -12,7 +12,7 @@ const assert=require('node:assert/strict');
         await p.goto(url);
         assert.equal(await p.locator('#game-mode').inputValue(),'solo');
         assert.equal(await p.locator('#player-name-1').innerText(),'Бот');
-        await p.locator('#start').click();
+        if(process.env.GARDEN_TEST_BOT_STYLE)await p.locator('#bot-style').selectOption(process.env.GARDEN_TEST_BOT_STYLE);await p.locator('#start').click();
         await p.waitForFunction(()=>store.state.garden.phase==='play'&&store.state.garden.active===0);
         assert(await p.locator('#action-panel').isVisible());
         // Use the same public tile-list and buttons as a human.
@@ -51,6 +51,14 @@ const assert=require('node:assert/strict');
         assert.deepEqual(errors,[]);
         assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
         console.log('PASS solo '+width+': default mode, automatic bot + reason/selection, return to human, full match '+result.score.join(':')+', stop after end, persistent camera/canvas, no errors/overflow.');
+        const repeat=await p.evaluate(()=>({seed:store.state.seed,style:store.state.garden.botStyle,tiles:JSON.stringify(store.state.garden.tiles.map(t=>[t.q,t.r,t.type,t.fertile]))}));
+        await p.locator('#same').click();
+        await p.waitForSelector('#start');
+        assert.equal(await p.locator('#seed-input').inputValue(),String(repeat.seed));
+        assert.equal(await p.locator('#bot-style').inputValue(),repeat.style);
+        await p.locator('#start').click();
+        assert.equal(await p.evaluate(()=>JSON.stringify(store.state.garden.tiles.map(t=>[t.q,t.r,t.type,t.fertile]))),repeat.tiles);
+        console.log('PASS exact same-map restart and retained opponent '+repeat.style+'.');
         await ctx.close();
     }
     await browser.close();
