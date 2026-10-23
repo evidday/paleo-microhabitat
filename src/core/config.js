@@ -4,14 +4,26 @@
         stock: 8, target: 11, maxMoves: 24, radius: 3, minHarvest: 3,
         harvestBonus: 1, scoreFloor: 1,
         biomes: ['Влажная низина', 'Перегной', 'Споровые заросли'],
-        colors: ['#66adbb', '#a4b969', '#a48bc7'], symbols: ['≈', '♣', '✦'],
+        colors: ['#66adbb', '#b8b56b', '#a48bc7'],
+        terrainPalette:[['#65acb5','#72b6be','#5fa1ae'],['#b8b56b','#c3b77a','#adad65'],['#a48bc7','#b097cf','#9882bd']], symbols: ['≈', '♣', '✦'],
         fertile: [[0,-1],[0,0],[0,1]],
-        tiers: { ages: [2,5], names: ['Росток','Крепыш','Старый злюка'] }, skirmishMs: 1700,
+        tiers: { ages: [2,5], names: ['Росток','Крепыш','Старый злюка'] }, skirmishMs: 3200,
+        combat: { tierPower: [0,2,4,6], homeBonus:2, introMs: 1400 },
+        roles: [
+            {name:'Коренник',icon:'🛡',rule:'+1 в защите',bonus:1},
+            {name:'Задира',icon:'🥊',rule:'+1 в атаке',bonus:1},
+            {name:'Плевун',icon:'💨',rule:'+1 на споровом гексе',bonus:1},
+            {name:'Дикарь',icon:'🍄',rule:'Без бонуса типажа',bonus:0}
+        ],
+        cards: {
+            limit:5,
+            kinds:{guardian:{name:'Коренник',icon:'🛡',role:0,text:'+1 в защите. Посади Т1 или пожертвуй для подкормки.'},brawler:{name:'Задира',icon:'🥊',role:1,text:'+1 в атаке. Посади Т1 или пожертвуй для подкормки.'},spitter:{name:'Плевун',icon:'💨',role:2,text:'+1 на спорах. Посади Т1 или пожертвуй для подкормки.'}}
+        },
         bot: {
             thinkMs: 450, showMs: 900, handoffMs: 650,
             styles: {
                 short: { name: 'Скороспел', summary: 'Маленький урожай, зато часто. Три грибочка — и домой.', harvestSize: 3, missingBiome: 7, fertility: 1, approach: 0, contest: -2, retreatAt: 1 },
-                long: { name: 'Мицелий Великий', summary: 'Растит до семи фишек и тянется в центр. «Это всё моё. Пока устно».', harvestSize: 7, missingBiome: 4, fertility: 8, approach: 3, contest: 1, retreatAt: 3 }
+                long: { name: 'Мицелий Великий', summary: 'Растит до семи фишек и тянется в центр. «Это всё моё. Пока устно».', harvestSize: 7, missingBiome: 12, fertility: 8, approach: 3, contest: 1, retreatAt: 3 }
             }
         },
         maps: {

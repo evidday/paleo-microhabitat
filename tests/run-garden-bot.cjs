@@ -3,7 +3,7 @@ global.window = global;
 require('../src/store/store.js');
 require('../src/config/colony.js');
 require('../src/core/config.js');
-require('../src/core/gardenMaps.js');require('../src/core/gardenSystem.js');
+require('../src/core/gardenMaps.js');require('../src/core/gardenSystem.js');require('../src/core/gardenConflict.js');
 require('../src/core/gardenBot.js');
 let suites = 0;
 function check(name, fn) { fn(); suites++; console.log('PASS ' + name); }
@@ -16,13 +16,13 @@ function planAndAct(g) {
     store.dispatch('GARDEN_BEGIN');
     const plan = gardenBot.choose(g);
     assert(plan);
-    assert(gardenRules.actions(g,g.active).some(a=>a.type===plan.type && a.id===plan.id));
+    assert(plan.type==='GARDEN_CARD'?!gardenRules.cardReason(g,g.active,plan.cardId,plan.id,plan.mode):gardenRules.actions(g,g.active).some(a=>a.type===plan.type && a.id===plan.id));
     if(g.active===1) {
         store.dispatch('GARDEN_BOT_PLAN',plan);
         assert(g.botPlan);
     }
     const ply=g.ply;
-    store.dispatch(plan.type,plan.id===undefined?undefined:{id:plan.id});
+    store.dispatch(plan.type,plan);
     assert.equal(g.ply,ply+1);
     assert.equal(g.botPlan,null);
 }

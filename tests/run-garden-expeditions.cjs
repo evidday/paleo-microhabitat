@@ -1,9 +1,9 @@
 const assert=require('node:assert/strict');global.window=global;
-for(const file of ['store/store','config/colony','core/config','core/gardenMaps','core/gardenSystem','core/gardenBot'])require('../src/'+file+'.js');
+for(const file of ['store/store','config/colony','core/config','core/gardenMaps','core/gardenSystem','core/gardenConflict','core/gardenBot'])require('../src/'+file+'.js');
 let suites=0;function check(name,fn){fn();console.log('PASS '+name);suites++}
 function start(seed,map='classic',botStyle='short'){store.clearAll();store.resetState(seed);gardenSystem.init();store.dispatch('GARDEN_START',{a:0,b:1,mode:'solo',map,botStyle});return store.state.garden}
 function allConnected(g){const seen=new Set([g.bases[0]]),queue=[g.tiles[g.bases[0]]];while(queue.length){const a=queue.shift();g.tiles.forEach(t=>{if(!seen.has(t.id)&&gardenRules.adjacent(a,t)){seen.add(t.id);queue.push(t)}})}return seen.size===g.tiles.length}
-function action(g){store.dispatch('GARDEN_BEGIN');const a=gardenBot.choose(g);assert(a);assert(gardenRules.actions(g,g.active).some(b=>a.type===b.type&&a.id===b.id));store.dispatch(a.type,a.id===undefined?undefined:{id:a.id});return a}
+function action(g){store.dispatch('GARDEN_BEGIN');const a=gardenBot.choose(g);assert(a);assert(a.type==='GARDEN_CARD'?!gardenRules.cardReason(g,g.active,a.cardId,a.id,a.mode):gardenRules.actions(g,g.active).some(b=>a.type===b.type&&a.id===b.id));store.dispatch(a.type,a);return a}
 check('profiles change topology and dominant biome across 600 generated boards',()=>{
  const signatures=new Set(),sizes=new Set();
  for(const map of ['rain','wind','pickers'])for(let seed=1;seed<=200;seed++){

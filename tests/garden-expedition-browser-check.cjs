@@ -15,19 +15,19 @@ const {pathToFileURL}=require('node:url');const path=require('node:path');const 
   assert.equal(await p.evaluate(()=>store.state.garden.tiles.length),33);
   await p.locator('#begin').click();assert(await p.locator('.coach').isVisible());
   assert((await p.locator('.coach').innerText()).includes('Нажмите'));
-  async function grow(id){await p.locator('#camera summary').click();await p.locator('#tile-list [data-tile="'+id+'"]').click();await p.locator('#camera summary').click();assert((await p.locator('.coach').innerText()).includes('Жмите'));await p.locator('#grow').click()}
+  async function grow(id){await p.locator('#camera summary').click();await p.locator('#tile-list [data-tile="'+id+'"]').click();await p.locator('#camera summary').click();assert(await p.locator('#grow').isEnabled());await p.locator('#grow').click()}
   let found=false;
   for(let i=0;i<14;i++){
    if(i)await p.locator('#begin').click();
-   const id=await p.evaluate(()=>{const g=store.state.garden;const legal=gardenRules.actions(g,g.active).filter(a=>a.type==='GARDEN_GROW');const origin={q:0,r:0};function d(t){return Math.max(Math.abs(t.q),Math.abs(t.r),Math.abs(t.q+t.r))}return legal.sort((a,b)=>d(g.tiles[a.id])-d(g.tiles[b.id])||a.id-b.id)[0].id});
+   const id=await p.evaluate(()=>{const g=store.state.garden;const legal=gardenRules.actions(g,g.active).filter(a=>a.type==='GARDEN_GROW'||a.type==='GARDEN_FIGHT');const origin={q:0,r:0};function d(t){return Math.max(Math.abs(t.q),Math.abs(t.r),Math.abs(t.q+t.r))}return legal.sort((a,b)=>d(g.tiles[a.id])-d(g.tiles[b.id])||a.id-b.id)[0].id});
    await grow(id);
    assert(await p.locator('[data-stock-delta="-1"]').count()>0);
    if(await p.evaluate(()=>store.state.garden.lastAction.skirmish)){
     found=true;await p.waitForTimeout(350);assert(await p.evaluate(()=>gardenView.metrics().skirmish));
-    assert((await p.locator('#activity').innerText()).includes('драка'));
-    const plan=await p.evaluate(()=>gardenRules.preview(store.state.garden,store.state.garden.lastAction.owner));assert(plan.conflicts.length>0);
+    assert((await p.locator('#activity').textContent()).toLowerCase().includes('драка'));
+    const plan=await p.evaluate(()=>gardenRules.preview(store.state.garden,store.state.garden.lastAction.owner));assert(['win','loss','draw'].includes(await p.evaluate(()=>store.state.garden.lastAction.battle.outcome)));
     await p.screenshot({path:width<700?'garden-v10-brawl-mobile.png':'garden-v10-brawl-desktop.png'});
-    const fightState=await p.evaluate(()=>JSON.stringify(store.state));await p.waitForTimeout(1600);assert.equal(await p.evaluate(()=>JSON.stringify(store.state)),fightState,'Animation does not change game state');assert.equal(await p.evaluate(()=>gardenView.metrics().skirmish),false);
+    const fightState=await p.evaluate(()=>JSON.stringify(store.state));await p.waitForTimeout(await p.evaluate(()=>gardenConfig.combat.introMs+gardenConfig.skirmishMs+100));assert.equal(await p.evaluate(()=>JSON.stringify(store.state)),fightState,'Animation does not change game state');assert.equal(await p.evaluate(()=>gardenView.metrics().skirmish),false);
     break;
    }
   }

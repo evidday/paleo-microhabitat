@@ -23,7 +23,7 @@ const assert=require('node:assert/strict');
                 await p.locator('#tile-list [data-tile="'+a.id+'"]').click();
                 await p.locator('#camera summary').click();
             }
-            await p.locator({GARDEN_GROW:'#grow',GARDEN_HARVEST:'#harvest',GARDEN_RETRACT:'#retract'}[a.type]).click();
+            if(a.type==='GARDEN_CARD'){await p.locator('#open-hand').click();await p.locator('[data-card="'+a.cardId+'"]').click();await p.locator('#card-mode').selectOption(a.mode);await p.locator('#card-target').selectOption(String(a.id));await p.locator('#play-card').click()}else if(a.type==='GARDEN_TRADE'){await p.locator('#open-hand').click();for(const id of a.cardIds)await p.locator('[data-card="'+id+'"]').click();await p.locator('[data-trade="'+a.kind+'"]').click()}else await p.locator({GARDEN_GROW:'#grow',GARDEN_FIGHT:'#grow',GARDEN_HARVEST:'#harvest',GARDEN_RETRACT:'#retract'}[a.type]).click();
         }
         const canvas=await p.evaluate(()=>{window.savedCanvas=document.getElementById('garden-canvas');return gardenView.metrics().camera;});
         await humanMove();
@@ -38,7 +38,7 @@ const assert=require('node:assert/strict');
         assert(await p.evaluate(()=>window.savedCanvas===document.getElementById('garden-canvas')));
         assert.deepEqual(await p.evaluate(()=>gardenView.metrics().camera),canvas);
         // Timing changes only presentation; avoid spending a minute waiting in an automated match.
-        await p.evaluate(()=>Object.assign(gardenConfig.bot,{thinkMs:20,showMs:30,handoffMs:20}));
+        await p.evaluate(()=>{Object.assign(gardenConfig.bot,{thinkMs:20,showMs:30,handoffMs:20});gardenConfig.combat.introMs=40;gardenConfig.skirmishMs=80});
         while(await p.evaluate(()=>store.state.garden.phase!=='over')){
             await p.waitForFunction(()=>store.state.garden.phase==='over'||store.state.garden.phase==='play'&&store.state.garden.active===0);
             if(await p.evaluate(()=>store.state.garden.phase==='over'))break;
