@@ -6,13 +6,13 @@
         var y=.08+Math.sin(cx*.7)*.045+Math.cos(cz)*.045
         var assets=[],fighters=[],battle=action.battle
         function mesh(geo){var m=renderer.mesh(geo);assets.push(m);return m}
-        for(var owner=0;owner<2;owner++){
-            var body=new G(),f=config.colony.factions[g.players[owner].faction]
-            var stats=battle?(owner===battle.attack.owner?battle.attack:battle.defense):{tier:1,role:1,look:tile.look,decor:tile.decor};mushroomModel.make(body,f,stats.role,stats.decor,false,true,stats.tier,stats.look)
+        var roster=battle&&battle.teams?battle.teams.reduce(function(all,team){return all.concat(team)},[]):[battle?battle.attack:{owner:0,tier:1,role:1,look:tile.look,decor:tile.decor},battle?battle.defense:{owner:1,tier:1,role:1,look:tile.look,decor:tile.decor}];
+        var slots=[0,0];roster.forEach(function(stats){var owner=stats.owner,slot=slots[owner]++,body=new G(),f=config.colony.factions[g.players[owner].faction];
+            mushroomModel.make(body,f,stats.role,stats.decor,false,true,stats.tier,gardenKingdoms.look(stats.look));
             for(var k=0;k<body.data.length;k+=9){body.data[k]*=.7;body.data[k+1]*=.8;body.data[k+2]*=.7}
-            var glove=new G();glove.outline=true;glove.ellipsoid(0,0,0,.2,.2,.22,f.color);glove.frustum(0,-.2,0,.11,.12,.08,8,'#ffe6a7')
-            fighters.push({body:mesh(body),glove:mesh(glove),owner:owner,stats:stats})
-        }
+            var glove=new G();glove.outline=true;glove.ellipsoid(0,0,0,.2,.2,.22,f.color);glove.frustum(0,-.2,0,.11,.12,.08,8,'#ffe6a7');
+            fighters.push({body:mesh(body),glove:mesh(glove),owner:owner,stats:stats,slot:slot});
+        });
         var arm=new G();arm.outline=true;arm.branch([0,0,0],[0,-1,0],.055,'#ffe4aa');var armMesh=mesh(arm)
         var joint=new G();joint.ellipsoid(0,0,0,.06,.06,.06,'#ffe4aa');var jointMesh=mesh(joint)
         var shield=new G();shield.outline=true;shield.box(-.16,-.25,-.055,.34,.5,.13,'#bba6ee');var shieldMesh=mesh(shield);var sack=new G();sack.outline=true;sack.ellipsoid(0,0,0,.18,.23,.18,'#b7dc62');var sackMesh=mesh(sack);var spore=new G();spore.outline=true;spore.ellipsoid(0,0,0,.16,.16,.16,'#b5f546');var sporeMesh=mesh(spore);var puff=new G();puff.ellipsoid(0,0,0,.12,.12,.12,'#ffe17b');var puffMesh=mesh(puff)
@@ -27,7 +27,7 @@
                     var side=a.owner===0?-1:1,phase=elapsed/390-a.owner*.5
                     var contact=Math.max(0,Math.sin(phase*Math.PI*2)),hit=Math.max(0,Math.sin((phase-.5)*Math.PI*2))
                     var approach=Math.min(1,progress*5),separation=1.05-approach*.36
-                    var x=cx+side*(separation-hit*.08),z=cz+.12
+                    var x=cx+side*(separation-hit*.08),z=cz+.12+(a.slot===1?-2.6:a.slot===2?2.6:0)
                     var loser=battle&&battle.outcome!=='draw'&&a.owner===(battle.outcome==='win'?battle.defense.owner:battle.attack.owner),knock=loser?Math.max(0,(progress-.76)/.24):0;x+=side*knock*1.8;var scale=.88,roll=reduced?0:side*(-hit*.2+Math.sin(elapsed*.015)*.025+knock*.8)
                     var yaw=a.owner===0?.9:-.75
                     var bob=reduced?0:Math.abs(Math.sin(elapsed*.014))*.055

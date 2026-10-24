@@ -1,5 +1,6 @@
+function settleRounds(){const g=store.state.garden;if(g.phase==='rally')store.dispatch('GARDEN_RESOLVE_ROUND');if(g.phase==='roundBattle')store.dispatch('GARDEN_NEXT_ROUND')}
 const assert=require('node:assert/strict');global.window=global;
-for(const file of ['store/store','config/colony','core/config','core/gardenMaps','core/gardenSystem','core/gardenConflict','core/gardenBot'])require('../src/'+file+'.js');
+for(const file of ['store/store','config/colony','core/config','core/gardenMaps','core/gardenSystem','core/gardenConflict','core/gardenRound','core/gardenBot'])require('../src/'+file+'.js');
 let suites=0;function check(name,fn){fn();console.log('PASS '+name);suites++}
 function start(seed,map='classic',botStyle='short'){store.clearAll();store.resetState(seed);gardenSystem.init();store.dispatch('GARDEN_START',{a:0,b:1,mode:'solo',map,botStyle});return store.state.garden}
 function allConnected(g){const seen=new Set([g.bases[0]]),queue=[g.tiles[g.bases[0]]];while(queue.length){const a=queue.shift();g.tiles.forEach(t=>{if(!seen.has(t.id)&&gardenRules.adjacent(a,t)){seen.add(t.id);queue.push(t)}})}return seen.size===g.tiles.length}
@@ -30,7 +31,7 @@ check('two styles make different harvest decisions on the same legal network',()
 check('full games on every expedition: legal, deterministic, no deadlock, styles measurably differ',()=>{
  const stats={short:{harvests:0,length:0,center:0},long:{harvests:0,length:0,center:0}};
  for(const map of ['classic','rain','wind','pickers','random'])for(let seed=1;seed<=60;seed++){
-  const g=start(seed,map);while(g.phase!=='over'){
+  const g=start(seed,map);while(g.phase!=='over'){settleRounds();if(g.phase==='over')break;
    const style=g.active===0?'short':'long';g.botStyle=style;
    const plan=gardenRules.preview(g,g.active),a=action(g);
    if(a.type==='GARDEN_HARVEST'){stats[style].harvests++;stats[style].length+=plan.count;}
@@ -42,7 +43,7 @@ check('full games on every expedition: legal, deterministic, no deadlock, styles
  assert(meanLong>meanShort+1.5);assert(stats.long.center>stats.short.center);console.log(JSON.stringify({stats,meanHarvestSize:{short:meanShort,long:meanLong}}));
 });
 check('replay with selected style, expedition, dispute metadata and quips',()=>{
- const g=start(48,'pickers','long');while(g.phase!=='over')action(g);
+ const g=start(48,'pickers','long');while(g.phase!=='over'){settleRounds();if(g.phase==='over')break;action(g)}
  const snap=JSON.stringify(store.state),history=JSON.parse(JSON.stringify(store.history));
  store.clearAll();store.resetState(48);gardenSystem.init();history.forEach(e=>store.dispatch(e.type,e.payload));assert.equal(JSON.stringify(store.state),snap);
 });

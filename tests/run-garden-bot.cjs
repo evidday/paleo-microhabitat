@@ -1,9 +1,10 @@
+function settleRounds(){const g=store.state.garden;if(g.phase==='rally')store.dispatch('GARDEN_RESOLVE_ROUND');if(g.phase==='roundBattle')store.dispatch('GARDEN_NEXT_ROUND')}
 const assert = require('node:assert/strict');
 global.window = global;
 require('../src/store/store.js');
 require('../src/config/colony.js');
 require('../src/core/config.js');
-require('../src/core/gardenMaps.js');require('../src/core/gardenSystem.js');require('../src/core/gardenConflict.js');
+require('../src/core/gardenMaps.js');require('../src/core/gardenSystem.js');require('../src/core/gardenConflict.js');require('../src/core/gardenRound.js');
 require('../src/core/gardenBot.js');
 let suites = 0;
 function check(name, fn) { fn(); suites++; console.log('PASS ' + name); }
@@ -13,6 +14,7 @@ function init(seed = 42, mode = 'solo') {
     return store.state.garden;
 }
 function planAndAct(g) {
+    settleRounds();if(g.phase==='over')return;
     store.dispatch('GARDEN_BEGIN');
     const plan = gardenBot.choose(g);
     assert(plan);

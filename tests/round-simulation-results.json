@@ -1,0 +1,115 @@
+{
+  "rule": "arena controls center; +1 on harvest while held, no automatic score",
+  "calibration": [
+    {
+      "styles": [
+        "short",
+        "long"
+      ],
+      "seeds": [
+        1,
+        100
+      ],
+      "games": 200,
+      "wins": [
+        71,
+        112
+      ],
+      "draws": 17,
+      "stuck": 0,
+      "meanRounds": 12.665
+    },
+    {
+      "styles": [
+        "short",
+        "short"
+      ],
+      "seeds": [
+        1,
+        100
+      ],
+      "games": 200,
+      "wins": [
+        88,
+        88
+      ],
+      "draws": 24,
+      "stuck": 0,
+      "meanRounds": 11.7
+    },
+    {
+      "styles": [
+        "long",
+        "long"
+      ],
+      "seeds": [
+        1,
+        100
+      ],
+      "games": 200,
+      "wins": [
+        99,
+        99
+      ],
+      "draws": 2,
+      "stuck": 0,
+      "meanRounds": 14.1
+    }
+  ],
+  "holdout": [
+    {
+      "styles": [
+        "short",
+        "long"
+      ],
+      "seeds": [
+        101,
+        200
+      ],
+      "games": 200,
+      "wins": [
+        76,
+        97
+      ],
+      "draws": 27,
+      "stuck": 0,
+      "meanRounds": 12.755
+    },
+    {
+      "styles": [
+        "short",
+        "short"
+      ],
+      "seeds": [
+        101,
+        200
+      ],
+      "games": 200,
+      "wins": [
+        90,
+        90
+      ],
+      "draws": 20,
+      "stuck": 0,
+      "meanRounds": 11.6
+    },
+    {
+      "styles": [
+        "long",
+        "long"
+      ],
+      "seeds": [
+        101,
+        200
+      ],
+      "games": 200,
+      "wins": [
+        97,
+        97
+      ],
+      "draws": 6,
+      "stuck": 0,
+      "meanRounds": 13.82
+    }
+  ]
+}

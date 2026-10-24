@@ -8,12 +8,19 @@
         terrainPalette:[['#65acb5','#72b6be','#5fa1ae'],['#b8b56b','#c3b77a','#adad65'],['#a48bc7','#b097cf','#9882bd']], symbols: ['≈', '♣', '✦'],
         fertile: [[0,-1],[0,0],[0,1]],
         tiers: { ages: [2,5], names: ['Росток','Крепыш','Старый злюка'] }, skirmishMs: 3200,
-        combat: { tierPower: [0,2,4,6], homeBonus:2, introMs: 1400 },
+        combat: { tierPower: [0,2,4,6], homeBonus:3, introMs: 1400 },
         roles: [
             {name:'Коренник',icon:'🛡',rule:'+1 в защите',bonus:1},
             {name:'Задира',icon:'🥊',rule:'+1 в атаке',bonus:1},
             {name:'Плевун',icon:'💨',rule:'+1, если бой на спорах',bonus:1},
             {name:'Дикарь',icon:'🍄',rule:'Без бонуса типажа',bonus:0}
+        ],
+        round: { squad:3, reward:0, crownHarvest:1, pauseMs:350 },
+        kingdoms: [
+            {short:'Хунта',emblem:'♜',title:'Мухоморская хунта',role:0,motto:'За священный перегной!',text:'Коренники получают +1 силы. Стены спорят убедительнее слов.',architecture:'citadel'},
+            {short:'Поганки',emblem:'✦',title:'Орден поганок',role:2,motto:'Мы принесли дары. Все несъедобные.',text:'Плевуны получают +1 силы. Королевская дипломатия — по ветру.',architecture:'spires'},
+            {short:'Боровики',emblem:'♛',title:'Боровики-буржуи',role:1,motto:'Поляну в собственность!',text:'Задиры получают +1 силы. Если громче кричать, это уже закон.',architecture:'stockade'},
+            {short:'Лисички',emblem:'❧',title:'Лисичий синдикат',role:3,motto:'Мы предвидели твою обиду.',text:'Дикари получают +1 силы. Даже сорняк у нас при должности.',architecture:'grove'}
         ],
         cards: {
             limit:5,

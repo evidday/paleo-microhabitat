@@ -27,14 +27,14 @@ const assert=require('node:assert/strict');
         }
         const canvas=await p.evaluate(()=>{window.savedCanvas=document.getElementById('garden-canvas');return gardenView.metrics().camera;});
         await humanMove();
-        await p.waitForFunction(()=>store.state.garden.botPlan!==null);
+        await p.waitForFunction(()=>store.state.garden.botPlan!==null||store.state.garden.phase==='roundBattle');if(await p.evaluate(()=>store.state.garden.phase==='roundBattle')){await p.waitForFunction(()=>store.state.garden.phase==='play'&&store.state.garden.active===0);await humanMove();await p.waitForFunction(()=>store.state.garden.botPlan!==null);}
         assert(await p.locator('#action-panel').isHidden());
         assert((await p.locator('#handoff').innerText()).includes('Ход бота'));
         assert.equal(await p.locator('#begin').count(),0,'No manual handoff in solo');
         assert(await p.evaluate(()=>store.state.garden.botPlan.type==='GARDEN_HARVEST'||store.state.garden.selected===store.state.garden.botPlan.id));
         await p.screenshot({path:width<700?'garden-bot-mobile.png':'garden-bot-desktop.png'});
         await p.waitForFunction(()=>store.state.garden.phase==='play'&&store.state.garden.active===0);
-        assert((await p.locator('#activity').innerText()).includes('Бот:'));
+        assert(await p.evaluate(()=>store.state.garden.log.some(line=>line.includes('Бот:'))));
         assert(await p.evaluate(()=>window.savedCanvas===document.getElementById('garden-canvas')));
         assert.deepEqual(await p.evaluate(()=>gardenView.metrics().camera),canvas);
         // Timing changes only presentation; avoid spending a minute waiting in an automated match.

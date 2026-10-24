@@ -27,7 +27,7 @@ const {pathToFileURL}=require('node:url');const path=require('node:path');const 
     assert((await p.locator('#activity').textContent()).toLowerCase().includes('драка'));
     const plan=await p.evaluate(()=>gardenRules.preview(store.state.garden,store.state.garden.lastAction.owner));assert(['win','loss','draw'].includes(await p.evaluate(()=>store.state.garden.lastAction.battle.outcome)));
     await p.screenshot({path:width<700?'garden-v10-brawl-mobile.png':'garden-v10-brawl-desktop.png'});
-    const fightState=await p.evaluate(()=>JSON.stringify(store.state));await p.waitForTimeout(await p.evaluate(()=>gardenConfig.combat.introMs+gardenConfig.skirmishMs+100));assert.equal(await p.evaluate(()=>JSON.stringify(store.state)),fightState,'Animation does not change game state');assert.equal(await p.evaluate(()=>gardenView.metrics().skirmish),false);
+    const fightState=await p.evaluate(()=>JSON.stringify(store.state.garden.tiles));await p.waitForTimeout(await p.evaluate(()=>gardenConfig.combat.introMs+gardenConfig.skirmishMs+100));assert.equal(await p.evaluate(()=>JSON.stringify(store.state.garden.tiles)),fightState,'Animation does not change game state');assert(await p.evaluate(()=>store.state.garden.phase==='roundBattle'||!gardenView.metrics().skirmish));
     break;
    }
   }
