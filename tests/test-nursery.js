@@ -1,0 +1,23 @@
+;(function(){
+    'use strict';
+    store.clearAll();store.resetState(73);nurserySystem.init();
+    store.dispatch('N_START',{a:0,b:1,mode:'solo',map:'rain'});
+    var g=store.state.nursery,p=g.players[0],card=p.hand[0];
+    TestRunner.assertDeepEqual(p.resources,[2,3,2],'Nursery: exact starting income');
+    store.dispatch('N_RECRUIT',{card:card.id,slot:2});
+    TestRunner.assertEqual(p.units.length,3,'Nursery: hire consumes card and uses empty slot');
+    TestRunner.assertEqual(p.hand.length,2,'Nursery: paid card leaves hand');
+    var u=p.units.find(function(u){return u.slot===2;});
+    store.dispatch('N_MERGE',{id:u.id});
+    TestRunner.assertEqual(u.tier,2,'Nursery: two matching T1 become T2');
+    TestRunner.assertEqual(p.units.length,2,'Nursery: stack frees a slot');
+    store.dispatch('N_READY');store.dispatch('N_BEGIN');store.dispatch('N_READY');
+    TestRunner.assertEqual(g.phase,'battle','Nursery: two ready players cause one battle');
+    TestRunner.assert(g.battle.frames.some(function(f){return f.events.length;}),'Nursery: actual simulated attacks: '+g.battle.reason);
+    store.dispatch('N_RESOLVE');var saved=JSON.stringify(g);
+    store.dispatch('N_RESOLVE');TestRunner.assertEqual(JSON.stringify(g),saved,'Nursery: result reward once');
+    store.dispatch('N_NEXT');TestRunner.assertEqual(g.round,2,'Nursery: new round');
+    var state=JSON.stringify(store.state),history=JSON.parse(JSON.stringify(store.history));
+    store.clearAll();store.resetState(73);nurserySystem.init();history.forEach(function(e){store.dispatch(e.type,e.payload);});
+    TestRunner.assertEqual(JSON.stringify(store.state),state,'Nursery: deterministic replay');
+})();

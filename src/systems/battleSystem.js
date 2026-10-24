@@ -42,7 +42,7 @@
             return {initial: team.length, alive: team.filter(function (u) { return u.hp > 0; }).length, hp: team.reduce(function (n, u) { return n + u.hp; }, 0), maxHp: team.reduce(function (n, u) { return n + u.maxHp; }, 0), dealt: team.reduce(function (n, u) { return n + u.dealt; }, 0), spores: team.reduce(function (n, u) { return n + u.spores; }, 0), fed: team.filter(function (u) { return u.fed; }).length};
         })};
     }
-    function simulate(initial) {
+    function simulate(initial, options) {
         var units = copy(initial), frames = [], winner = null, reason = '', criterion = '';
         function frame(events, decisions) { frames.push({units: copy(units), events: events, decisions: decisions, deaths: events.length ? units.filter(function (u) { return u.hp === 0 && events.some(function (e) { return e.to === u.id; }); }).map(function (u) { return u.id; }) : []}); }
         function eliminated() {
@@ -67,7 +67,12 @@
                 } else moves.push({id: u.id, target: target.id, decision: decision});
             });
             moves.sort(function (a, b) { return step % 2 ? a.id - b.id : b.id - a.id; }).forEach(function (m) {
-                var u = units.find(function (t) { return t.id === m.id; }), target = units.find(function (t) { return t.id === m.target; }), p = pathStep(u, target, units);
+                var u = units.find(function (t) { return t.id === m.id; }), target = units.find(function (t) { return t.id === m.target; });
+                // Nursery battles hold contact when an earlier mover has already closed the gap.
+                // Otherwise two melee fighters can endlessly sidestep an approaching target.
+                // Opt-in preserves the archived modes' existing deterministic replays.
+                if (options && options.holdContact && distance(u, target) <= u.range) { m.decision.action = 'hold'; return; }
+                var p = pathStep(u, target, units);
                 if (p) { u.x = p.x; u.y = p.y; m.decision.endX = p.x; m.decision.endY = p.y; }
                 else m.decision.action = 'blocked';
             });

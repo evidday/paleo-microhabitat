@@ -1,0 +1,25 @@
+{
+  "games": 240,
+  "stack": 201,
+  "land": 39,
+  "draw": 0,
+  "rounds": 1502,
+  "factions": [
+    33,
+    87,
+    31,
+    89
+  ],
+  "actions": {
+    "N_BEGIN": 3004,
+    "N_GROW": 1872,
+    "N_RECRUIT": 3501,
+    "N_MERGE": 2307,
+    "N_READY": 3004,
+    "N_RESOLVE": 1502,
+    "N_NEXT": 1262,
+    "N_FEED": 677,
+    "N_MOVE": 39
+  },
+  "meanRounds": 6.258333333333334
+}
