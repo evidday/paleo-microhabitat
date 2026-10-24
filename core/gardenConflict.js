@@ -5,8 +5,8 @@
     function fighter(g,t,p,attacking,terrain) {
         var rank=t.base===p?3:gardenRules.tier(g,t,p),kind=role(g,t,p)
         var bonus=kind===0&&!attacking||kind===1&&attacking||kind===2&&terrain.type===2?1:0
-        var buff=0,home=t.base===p?C.combat.homeBonus:0
-        return {owner:p,id:t.id,tier:rank,role:kind,base:C.combat.tierPower[rank],bonus:bonus,home:home,buff:buff,power:C.combat.tierPower[rank]+bonus+home,look:t.look,decor:t.decor}
+        var kingdom=C.kingdoms[g.players[p].faction].role===kind?1:0;var buff=0,home=t.base===p?C.combat.homeBonus:0
+        return {owner:p,id:t.id,tier:rank,role:kind,base:C.combat.tierPower[rank],bonus:bonus,kingdom:kingdom,home:home,buff:buff,power:C.combat.tierPower[rank]+bonus+home+kingdom,look:t.look,decor:t.decor}
     }
     function connectedIds(g,p) {
         var seen=new Set([g.bases[p]]),queue=[g.tiles[g.bases[p]]]

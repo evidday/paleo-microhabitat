@@ -38,7 +38,7 @@
             }
         })
         growth.sort(function(a, b) { return b.value - a.value || a.id - b.id })
-        if(growth.length){if(!own.length&&hand.length){var wanted=g.botStyle==='long'?'guardian':'brawler',card=hand.find(function(c){return c.kind===wanted})||hand[0];return {type:'GARDEN_CARD',id:growth[0].id,cardId:card.id,mode:'plant',reason:'Высаживаю '+gardenConfig.cards.kinds[card.kind].name+' из руки: начну сеть с нужного типажа.'}}return {type:growth[0].type,id:growth[0].id,reason:growth[0].reason}}
+        if(growth.length){if(!own.length&&hand.length&&gardenConfig.kingdoms[g.players[p].faction].role!==3){var favorite=gardenConfig.kingdoms[g.players[p].faction].role,card=hand.find(function(c){return gardenConfig.cards.kinds[c.kind].role===favorite})||hand[0];return {type:'GARDEN_CARD',id:growth[0].id,cardId:card.id,mode:'plant',reason:'Высаживаю '+gardenConfig.cards.kinds[card.kind].name+' из руки: начну сеть с нужного типажа.'}}return {type:growth[0].type,id:growth[0].id,reason:growth[0].reason}}
         if (plan.eligible) return { type: 'GARDEN_HARVEST', reason: 'Запас закончился — собираю готовый урожай.' }
         var edge = legal.find(function(a) { return a.type === 'GARDEN_RETRACT' })
         return edge ? { type: edge.type, id: edge.id, reason: 'Возвращаю край: нужна фишка для нового направления.' } : null

@@ -18,7 +18,10 @@
         if(nextKey===scheduleKey)return
         scheduleKey=nextKey
         clearTimeout(timer)
-        if (stopped || g.mode !== 'solo' || g.phase === 'over') return
+        if(stopped||g.phase==='over')return
+        if(g.phase==='rally'){timer=setTimeout(function(){store.dispatch('GARDEN_RESOLVE_ROUND')},g.lastAction&&g.lastAction.skirmish?gardenConfig.combat.introMs+gardenConfig.skirmishMs:gardenConfig.round.pauseMs);return}
+        if(g.phase==='roundBattle'){timer=setTimeout(function(){store.dispatch('GARDEN_NEXT_ROUND')},gardenConfig.combat.introMs+gardenConfig.skirmishMs);return}
+        if(g.mode!=='solo')return
         if (g.phase === 'handoff') {
             timer = setTimeout(function() { store.dispatch('GARDEN_BEGIN') }, g.lastAction&&g.lastAction.skirmish?gardenConfig.combat.introMs+gardenConfig.skirmishMs:gardenConfig.bot.handoffMs)
         } else if (g.phase === 'play' && g.active === 1) {
@@ -42,6 +45,7 @@
         unsubscribe()
     })
     function loop(t) {
+        gardenLobby.animate(t)
         gardenView.animate(t)
         requestAnimationFrame(loop)
     }
