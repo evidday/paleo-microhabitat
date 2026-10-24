@@ -1,6 +1,6 @@
 const {chromium}=(()=>{try{return require('playwright')}catch(e){return require(require('node:path').join(process.env.USERPROFILE,'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'))}})();
 const{pathToFileURL}=require('node:url'),path=require('node:path'),assert=require('node:assert/strict');
-(async()=>{const b=await chromium.launch({channel:'msedge',headless:true}),base=process.env.GARDEN_TEST_URL||pathToFileURL(path.resolve('src/index.html')).href;
+(async()=>{const b=await chromium.launch({channel:'msedge',headless:true}),base=process.env.GARDEN_TEST_URL||pathToFileURL(path.resolve('src/garden-v12.html')).href;
 for(const width of [390,1440]){
  const ctx=await b.newContext({viewport:{width,height:950},isMobile:width<700,hasTouch:width<700}),p=await ctx.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
  await p.goto(base.split('?')[0]+'?seed=42&v=11');await p.locator('#game-mode').selectOption('hotseat');await p.locator('#map-profile').selectOption('classic');await p.evaluate(()=>{gardenConfig.combat.introMs=20;gardenConfig.skirmishMs=40;gardenConfig.round.pauseMs=10});await p.locator('#start').click();await p.locator('#begin').click();

@@ -4,7 +4,7 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 (async()=>{
     const browser=await chromium.launch({channel:'msedge',headless:true});
-    const url=process.env.GARDEN_TEST_URL||pathToFileURL(path.resolve('src/index.html')).href+'?seed=42';
+    const url=process.env.GARDEN_TEST_URL||pathToFileURL(path.resolve('src/garden-v12.html')).href+'?seed=42';
     for(const width of [390,1440]){
         const ctx=await browser.newContext({viewport:{width,height:950},isMobile:width<700,hasTouch:width<700});
         const p=await ctx.newPage(),errors=[];

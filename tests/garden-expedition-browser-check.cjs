@@ -2,7 +2,7 @@ const {chromium}=(()=>{try{return require('playwright')}catch(e){return require(
 const {pathToFileURL}=require('node:url');const path=require('node:path');const assert=require('node:assert/strict');
 (async()=>{
  const browser=await chromium.launch({channel:'msedge',headless:true});
- const base=process.env.GARDEN_TEST_URL||pathToFileURL(path.resolve('src/index.html')).href;
+ const base=process.env.GARDEN_TEST_URL||pathToFileURL(path.resolve('src/garden-v12.html')).href;
  for(const width of [390,1440]){
   const context=await browser.newContext({viewport:{width,height:950},isMobile:width<700,hasTouch:width<700});const p=await context.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
   await p.goto(base.split('?')[0]+'?seed=42&v=10');
