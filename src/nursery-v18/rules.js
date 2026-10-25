@@ -1,0 +1,24 @@
+;(function(){
+ 'use strict';var C=nurseryConfig;
+ function adjacent(a,b){return distance(a,b)===1;}function distance(a,b){return Math.max(Math.abs(a.q-b.q),Math.abs(a.r-b.r),Math.abs(a.q+a.r-b.q-b.r));}
+ function species(u){return Number.isInteger(u.species)?u.species:u.role;}
+ function tileKnown(g,t,p){return t.base>=0||t.owner===p||!!(t.revealed&&t.revealed[p]);}
+ function affordable(p,cost){return cost.every(function(n,i){return p.resources[i]>=n;});}
+ function stats(p,u){var id=species(u),s=C.species[id]||C.species[u.role],r=C.roles[s.role],rank=C.ranks[u.tier-1],ground=p.ground===undefined?1:p.ground;
+  var has=function(i){return p.support?p.support[i]:ground===i;};var hp=Math.round((r.hp+(s.hp||0))*rank.hp)+(u.fed?2:0)+(has(1)?2:0)-(p.faction===1||p.faction===2?1:0);
+  return {hp:Math.max(1,hp),damage:Math.max(0,Math.round((r.damage+(s.damage||0))*rank.damage)+(u.fed?1:0)+(p.faction===2&&r.range===1?1:0)),range:r.range+(s.range||0)+(p.faction===1&&s.role===2?1:0)+(has(2)&&r.range>1?1:0),armor:r.armor?r.armor+(s.armor||0)+u.tier-1+(p.faction===0?1:0):0,heal:r.heal?Math.round((r.heal+(s.heal||0))*rank.damage)+(has(0)?1:0):0,jump:!!r.jump,splash:!!r.splash,splashRadius:1.65+(s.splashRadius||0)};
+ }
+ function supplied(g,p){var seen=new Set([g.bases[p]]),queue=[g.bases[p]];while(queue.length){var t=g.tiles[queue.shift()];g.tiles.forEach(function(n){if(n.owner===p&&!seen.has(n.id)&&adjacent(t,n)){seen.add(n.id);queue.push(n.id);}});}return [...seen];}
+ function income(g,p){var n=C.income.slice(),network=supplied(g,p);g.tiles.forEach(function(t){if(t.owner===p&&t.base<0&&network.indexOf(t.id)>=0)n[t.type]+=t.yield||1;});return n;}
+ function bankRate(g,p){return g.players[p].faction===3||supplied(g,p).some(function(id){return g.tiles[id].site==='market';})?2:3;}
+ function growReason(g,id,p){var player=g.players[p],t=g.tiles[id];if(!t)return 'Выберите подсвеченный участок';if(player.grew)return 'Участок уже взят. Можно покупать бойцов или идти в бой';if(t.owner>=0)return t.owner===p?'Этот участок уже твой':'Этот участок занят соседом';var network=supplied(g,p);if(!network.some(function(i){return adjacent(g.tiles[i],t);}))return 'Нужен сосед любого участка своей сети';if(!affordable(player,C.grow))return 'Нужно 1 воды и 1 перегноя';return '';}
+ function placement(g,p,id){var player=g.players[p],tier=1,consumed=[];while(tier<3){var match=player.units.find(function(u){return species(u)===id&&!u.rest&&u.tier===tier&&consumed.indexOf(u.id)<0;});if(!match)break;consumed.push(match.id);tier++;}var slots=[];for(var slot=0;slot<C.slots;slot++)if(!player.units.some(function(u){return u.slot===slot;}))slots.push(slot);if(!consumed.length&&!slots.length)return {reason:'Все 9 мест заняты: продай бойца или ищи дубль'};var role=C.species[id].role,preferred=slots.filter(function(s){return s<C.activeSlots&&(C.roles[role].range>1?s>=3:s<3);});var consumedSlot=consumed.length?player.units.find(function(u){return u.id===consumed[0];}).slot:-1;return {reason:'',tier:tier,species:id,role:role,fed:player.units.some(function(u){return consumed.indexOf(u.id)>=0&&u.fed;}),consumed:consumed,slot:consumedSlot>=0?consumedSlot:preferred.length?preferred[0]:slots[0]};}
+ function hirePlan(g,p,cardId){var player=g.players[p],card=player.hand.find(function(c){return c.id===cardId;});if(!card)return {reason:'Предложение уже куплено'};var plan=placement(g,p,species(card));if(plan.reason)return plan;if(!affordable(player,C.roles[plan.role].cost))return {reason:'Не хватает припасов'};return plan;}
+ function support(g,p){var ids=supplied(g,p);return [0,1,2].map(function(type){return ids.some(function(id){return g.tiles[id].type===type;});});}
+ function supportText(p){return C.ground.filter(function(_,i){return p.support?p.support[i]:p.ground===i;}).join(' · ');}
+ function initial(g){return g.players.flatMap(function(p,owner){return p.units.filter(function(u){return u.slot<C.activeSlots&&!u.rest;}).slice().sort(function(a,b){return a.slot-b.slot;}).map(function(u){var s=stats(p,u),front=u.slot<3;return Object.assign({id:owner*100+u.slot,sourceId:u.id,owner:owner,role:u.role,species:species(u),tier:u.tier,faction:p.faction,fed:u.fed,look:u.look,mutations:u.mutations||0,x:owner===0?(front?2:0):(front?4:6),y:(u.slot%3)*2,hp:s.hp,maxHp:s.hp},s);});});}
+ function forecast(g){return nurseryCombat.simulate(initial(g));}
+ function frontierGap(g){return distance(g.tiles[g.players[0].front],g.tiles[g.players[1].front]);}
+ function claimable(g,p,id){return g.tiles[id].owner===p||!growReason(g,id,p);}
+ window.nurseryRules={distance:distance,adjacent:adjacent,species:species,tileKnown:tileKnown,affordable:affordable,stats:stats,supplied:supplied,income:income,bankRate:bankRate,growReason:growReason,hirePlan:hirePlan,placement:placement,support:support,supportText:supportText,initial:initial,forecast:forecast,frontierGap:frontierGap,claimable:claimable};
+})();

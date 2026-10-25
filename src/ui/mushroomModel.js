@@ -2,7 +2,7 @@
 function mushroom(geo,f,role,variant,small,noEquipment,tier,look){
 geo.outline=true;look=look||{};tier=tier||1;var start=geo.data.length,style=look.hat===1?'elf':look.hat===2?'brute':look.hat===3?'chaos':f.style,hatColor=look.color?['', '#ff5983','#a777ff','#9dde42','#ffba45','#29c5c1'][look.color]:f.color;
 var chunky=style==='brute',tall=style==='elf',stem=small?.22:tall?1.25:chunky?.95:1.1,cap=small?.26:chunky?.66:.58,skin='#ffe4aa';
-geo.frustum(0,0,0,small?.06:.23,small?.06:.2,stem,8,skin);geo.frustum(0,stem-.06,0,cap,.2,.1,8,'#f8cba2');
+geo.frustum(0,0,0,small?.06:.23,small?.06:.2,stem,8,skin);geo.headStart=geo.data.length;geo.frustum(0,stem-.06,0,cap,.2,.1,8,'#f8cba2');
 if(tall)geo.frustum(0,stem,0,cap,0,.68,7,hatColor);else if(style==='chaos'){geo.frustum(0,stem,0,cap,.25,.28,8,hatColor);geo.frustum(-.34,stem+.16,0,.12,0,.35,5,hatColor);geo.frustum(.32,stem+.17,0,.14,0,.4,5,hatColor)}else{geo.frustum(0,stem,0,cap,.46,.2,10,hatColor);geo.frustum(0,stem+.2,0,.46,0,.22,10,hatColor)}
 if(!small){geo.frustum(0,.1,0,.245,.24,.11,8,f.color);for(var i=0;i<4;i++){var a=i*2+variant;geo.ellipsoid(Math.cos(a)*cap*.5,stem+.23,Math.sin(a)*cap*.5,.09,.025,.065,'#fff7d6')}
 geo.ellipsoid(0,stem*.63,.17,.29,.31,.2,skin);var eyes=look.eyes||0,mouth=look.mouth||0;[-1,1].forEach(function(side){var x=side*.17,y=stem*.72;geo.ellipsoid(x,y,.39,.155,.18,.12,'#fffaf0');if(eyes===2){geo.branch([x-.055,y-.05,.53],[x+.055,y+.05,.53],.022,'#40233e');geo.branch([x+.055,y-.05,.53],[x-.055,y+.05,.53],.022,'#40233e')}else{geo.ellipsoid(x+(eyes===1?.045:side*.015),y-.025,.52,.055,.075,.025,'#39233e');geo.branch([x-side*.13,y+.17,.4],[x+side*.09,y+.1,.52],eyes===1?.035:.025,hatColor)}});

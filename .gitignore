@@ -31,3 +31,14 @@ debug-immersive.png
 
 garden-*.png
 tests/balance-sweep.cjs
+
+# Local design/audio production outputs
+.taste-skill/
+.impeccable/
+UI_REVIEW_A.md
+UI_REVIEW_B.md
+src/assets/audio/*.wav
+src/assets/audio/sporny-*
+src/assets/audio/hihikoren-accelerando*
+src/assets/audio/hihikoren-rush*
+src/assets/audio/score.json
