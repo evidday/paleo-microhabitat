@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict');const path=require('node:path');const{pathToFileURL}=require('node:url');
 const{chromium}=require(path.join(process.env.USERPROFILE,'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));
-const base=process.env.NURSERY_TEST_URL||pathToFileURL(path.resolve('src/index.html')).href;
+const base=process.env.NURSERY_TEST_URL||pathToFileURL(path.resolve('src/world-v15.html')).href;
 (async()=>{const browser=await chromium.launch({channel:'msedge',headless:true});for(const width of (process.env.NURSERY_TEST_WIDTH?[+process.env.NURSERY_TEST_WIDTH]:[390,900,1440])){
 const page=await browser.newPage({viewport:{width,height:950},isMobile:width===390,hasTouch:width===390});let errors=[];page.on('pageerror',e=>errors.push(e.message));
 const press=async(sel)=>{const el=page.locator(sel).first();if(width===390)await el.tap();else await el.click();};

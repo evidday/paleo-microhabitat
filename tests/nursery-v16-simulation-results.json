@@ -1,0 +1,28 @@
+{
+  "games": 240,
+  "stack": 123,
+  "land": 117,
+  "draw": 0,
+  "rounds": 2019,
+  "factions": [
+    68,
+    71,
+    53,
+    48
+  ],
+  "seatWins": [
+    133,
+    107
+  ],
+  "actions": {
+    "N_BEGIN": 4038,
+    "N_GROW": 3804,
+    "N_HIRE": 3970,
+    "N_FEED": 5676,
+    "N_READY": 4038,
+    "N_RESOLVE": 2019,
+    "N_NEXT": 1779,
+    "N_MOVE": 53
+  },
+  "meanRounds": 8.4125
+}

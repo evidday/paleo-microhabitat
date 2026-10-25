@@ -1,24 +1,14 @@
 ;(function(){
-    'use strict';var C=nurseryConfig,R=nurseryRules;
-    function choose(g) {
-        var p=g.players[g.active],id=g.active;
-        for(var i=0;i<p.units.length;i++)if(R.pair(p,p.units[i].id))return {type:'N_MERGE',id:p.units[i].id};
-        var free=[];for(var s=0;s<6;s++)if(!p.units.some(function(u){return u.slot===s;}))free.push(s);
-        var land=g.tiles.filter(function(t){return !R.growReason(g,t.id,id);}).sort(function(a,b){return p.resources[a.type]-p.resources[b.type]||Math.abs(a.q)-Math.abs(b.q)||a.id-b.id;});
-        if(g.botStyle==='land'&&land.length&&g.round<7)return {type:'N_GROW',id:land[0].id};
-        var cards=p.hand.slice().sort(function(a,b){var dup=function(c){return p.units.some(function(u){return u.role===c.role&&u.tier===1;})?1:0;};return dup(b)-dup(a)||a.id-b.id;});
-        for(var i=0;i<cards.length;i++){
-            var c=cards[i],preferred=free.filter(function(slot){return c.role===2?slot>=3:slot<3;}),slot=preferred.length?preferred[0]:free[0];
-            if(!R.recruitReason(g,c.id,slot,id))return {type:'N_RECRUIT',card:c.id,slot:slot};
-        }
-        // Repair the formation for free: ranged in the rear, melee in front.
-        var bad=p.units.find(function(u){return u.role===2&&u.slot<3;}),empty=free.find(function(s){return s>=3;});
-        if(bad&&empty!==undefined)return {type:'N_MOVE',id:bad.id,slot:empty};
-        bad=p.units.find(function(u){return u.role!==2&&u.slot>=3;});empty=free.find(function(s){return s<3;});
-        if(bad&&empty!==undefined)return {type:'N_MOVE',id:bad.id,slot:empty};
-        if(land.length&&p.units.length>=3)return {type:'N_GROW',id:land[0].id};
-        if(R.affordable(p,C.feed)){var hungry=p.units.filter(function(u){return !u.fed;}).sort(function(a,b){return b.tier-a.tier||a.role-b.role;})[0];if(hungry)return {type:'N_FEED',id:hungry.id};}
-        return {type:'N_READY'};
-    }
-    window.nurseryBot={choose:choose};
+ 'use strict';var C=nurseryConfig,R=nurseryRules;
+ function choose(g){var p=g.players[g.active],enemy=g.players[1-g.active],land=g.tiles.filter(function(t){return !R.growReason(g,t.id,g.active);}).sort(function(a,b){return Math.abs(a.q)-Math.abs(b.q)||a.id-b.id;});
+  if(g.botStyle==='land'&&land.length&&g.round<=3)return {type:'N_GROW',id:land[0].id,terrain:p.resources.indexOf(Math.min.apply(null,p.resources))};
+  if(!p.hired){var count=function(role){return enemy.units.filter(function(u){return u.role===role;}).length;};var offers=p.hand.map(function(c){var plan=R.hirePlan(g,g.active,c.id);if(plan.reason)return null;var same=p.units.some(function(u){return u.role===c.role;});var counters=[count(2),count(0),count(5),p.units.length>=2?1:0,count(2)+count(3),count(0)+count(1)];var score=(plan.tier-1)*3+(same?0:2)+Math.min(2,counters[c.role])*2;if(c.role===3&&p.units.every(function(u){return u.role===3;}))score-=4;return {card:c.id,score:score};}).filter(Boolean).sort(function(a,b){return b.score-a.score||a.card-b.card;});if(offers.length)return {type:'N_HIRE',card:offers[0].card};}
+  var free=[];for(var s=0;s<6;s++)if(!p.units.some(function(u){return u.slot===s;}))free.push(s);
+  var bad=p.units.find(function(u){return C.roles[u.role].range>1&&u.slot<3;}),slot=free.find(function(s){return s>=3;});if(bad&&slot!==undefined)return {type:'N_MOVE',id:bad.id,slot:slot};
+  bad=p.units.find(function(u){return C.roles[u.role].range===1&&u.slot>=3;});slot=free.find(function(s){return s<3;});if(bad&&slot!==undefined)return {type:'N_MOVE',id:bad.id,slot:slot};
+  if(land.length&&p.hired)return {type:'N_GROW',id:land[0].id,terrain:p.resources.indexOf(Math.min.apply(null,p.resources))};
+  if(R.affordable(p,C.feed)){var hungry=p.units.filter(function(u){return !u.fed;}).sort(function(a,b){return b.tier-a.tier||a.role-b.role;})[0];if(hungry)return {type:'N_FEED',id:hungry.id};}
+  return {type:'N_READY'};
+ }
+ window.nurseryBot={choose:choose};
 })();
