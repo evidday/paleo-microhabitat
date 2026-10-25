@@ -3,7 +3,7 @@
  function make(geo,faction,role,variant,small,detached,tier,look){
   var rare=look&&look.species>=6,r=nurseryConfig.roles[role],f=Object.assign({},faction,{color:rare?['#adffd9','#ffb96c','#94cfff','#ecff85','#ffa9fb','#ffe98b'][role]:r.color}),l=Object.assign({},look,{hat:[2,0,1,1,3,2][role]});
   mushroomModel.make(geo,f,role<3?role:2,variant,small,role>=3||detached,tier,l);
-  var begin=geo.data.length;if(rare){geo.frustum(0,.47,.42,.09,0,.17,4,'#fff37a');}
+  var begin=geo.data.length;if(look&&look.mutations){geo.box(-.17,.65,.4,.2,.06,.035,'#ff8eb8');geo.box(-.17,.65,.425,.04,.15,.025,'#f5ff9a');}if(rare){geo.frustum(0,.47,.42,.09,0,.17,4,'#fff37a');}
   if(role===3){geo.box(0,.42,.4,.25,.08,.03,'#fffeec');geo.box(0,.34,.4,.08,.25,.03,'#fffeec');}
   if(role===4){geo.box(0,.71,.44,.58,.15,.06,'#36234e');geo.ellipsoid(-.16,.74,.51,.08,.025,.02,'#f5ff71');geo.ellipsoid(.16,.74,.51,.08,.025,.02,'#f5ff71');}
   if(role===5){geo.ellipsoid(-.16,.68,.48,.15,.16,.08,'#3a2559');geo.ellipsoid(.16,.68,.48,.15,.16,.08,'#3a2559');geo.ellipsoid(-.16,.68,.55,.09,.1,.02,'#8be9ff');geo.ellipsoid(.16,.68,.55,.09,.1,.02,'#8be9ff');}

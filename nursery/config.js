@@ -1,6 +1,6 @@
 ;(function(){
  'use strict';
- window.nurseryConfig={goal:5,maxRounds:60,handLimit:3,slots:9,activeSlots:6,start:[1,1,1],income:[1,2,1],grow:[1,1,0],feed:[1,1,0],replant:[1,2,1],
+ window.nurseryConfig={goal:5,maxRounds:20,handLimit:5,slots:9,activeSlots:6,start:[1,1,1],income:[1,2,1],grow:[1,1,0],feed:[1,1,0],replant:[1,2,1],
  teamColors:['#ff719d','#64edff','#cbfa65','#ffbf65'],
  resources:['Вода','Перегной','Споры'],icons:['💧','🌿','✦'],
  roles:[
@@ -22,9 +22,9 @@
  {name:'Трюфель-пироман',role:5,damage:-1,splashRadius:.45,text:'Взрыв шире, урон −1'}
  ],
  ground:['Вода: лекарю +1 лечения','Перегной: отряду +2 здоровья','Споры: дальним бойцам +1 дальность'],
- sites:{plain:{icon:'',name:'Поляна'},ruin:{icon:'🏺',name:'Руины: откроют редкий вид'},market:{icon:'🏪',name:'Лавка: обмен 2:1'},spring:{icon:'💎',name:'Источник: двойной доход'}},
+ sites:{plain:{icon:'',name:'Поляна'},ruin:{icon:'🏺',name:'Руины: редкий боец сразу'},market:{icon:'🏪',name:'Лавка: обмен 2:1'},spring:{icon:'💎',name:'Источник: двойной доход'}},
  ranks:[{hp:1,damage:1},{hp:1.7,damage:1.6},{hp:2.8,damage:2.4}],stepMs:650,introMs:1100,
  terrainPalette:[['#65d9e2','#74e8e6','#52c5d8'],['#bde76a','#d0ee79','#a9d965'],['#bb8ee8','#d6a2ee','#a47dd5']],
- actions:{hire:'N_HIRE',reroll:'N_REROLL',open:'N_OPEN',close:'N_CLOSE'}
+ actions:{menu:'N_MENU',formation:'N_FORMATION',hire:'N_HIRE',reroll:'N_REROLL',open:'N_OPEN',close:'N_CLOSE'}
  };
 })();

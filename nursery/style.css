@@ -37,3 +37,18 @@ body{background:radial-gradient(ellipse at 50% 35%,#76518d,#31204f 70%);color:#f
 .home-target{z-index:5}.front-target{z-index:3}.tier-unlock{margin:3px 0;font-size:.8rem;color:#e2ff77}
 
 body[data-phase="battle"] #merge-pop{display:none}
+
+/* v18: recruitment shop, the same coral/cyan/lime/purple language. */
+.field-only #hand{width:1100px;max-width:calc(100vw - 28px);max-height:68svh}
+.draft{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.draft-card{min-width:0}.draft-card .offer-art{height:130px}.draft-card strong{font-size:20px}.offer-purpose{font-size:12px;min-height:48px}.owned-copies{display:block;color:#e6ff92;font-size:12px;min-height:22px}.recruit-caption{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 3px}.recruit-caption b{color:#e7ff8b}.recruit-caption span{font-size:12px;color:#e4cdeb}.base-purpose{font-size:13px;color:#efffc3;margin-bottom:6px}.land-income{display:flex;justify-content:space-between;align-items:center;padding:10px 0}.land-income b{font-size:20px}.land-income strong{font-size:25px;color:#e7ff89}.instant-loot{background:#58416d;border-left:4px solid #e5ff88;padding:10px;color:#f8f6c4}.field-only #scene-targets .tile-target.reachable{background:#e5ff78;outline:2px solid #ffffd2;box-shadow:0 0 12px #c6ff5555}.tile-target sup{position:absolute;right:-4px;top:-10px;font-size:18px;color:#332447;background:#e8ff8b;border-radius:50%;width:20px;height:20px}.mini-roster button:has(small){position:relative}
+@media(max-width:800px){.field-only #hand{max-width:none;width:100%;max-height:61svh}.draft{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:9px;gap:9px;overscroll-behavior-x:contain}.draft-card{flex:0 0 148px;scroll-snap-align:start;min-height:278px}.draft-card .offer-art{height:92px}.draft-card strong{font-size:17px}.offer-purpose{font-size:11px;min-height:44px}.owned-copies{font-size:11px}.recruit-caption{align-items:flex-start}.recruit-caption span{font-size:11px;max-width:155px}.recruit-caption span:after{content:' · листай →'}.base-purpose{font-size:11px}.support-label{font-size:11px;margin:5px 0}.sheet-tools{margin-top:7px}.sheet-tools>small{display:none}.field-only #footer button{font-size:18px;min-width:132px}.sheet-title>span{font-size:11px}.sheet-title>b{font-size:16px}.field-only #scene-targets .tile-target.reachable{outline-width:1px}}
+
+@media(max-width:800px){body.sheet-open #host-narrator{display:none}}
+
+/* Context appears after the player's intent, not before it. */
+.field-only #notice{display:none}.field-only:not(.needs-resources) .resources{display:none}.recruit-tools details,.recruit-tools>small{display:none}.draft-card .offer-stats{display:none}#development .minor-action{grid-column:1/-1;font-size:13px;padding:6px;min-height:38px;justify-self:center;border:0;background:transparent;box-shadow:none;color:#dfcbe9}.recruit-caption{display:none}.base-purpose{font-size:12px}.field-only #hand .sheet-title>span{font-size:11px}.field-only:not(.needs-resources) #host-narrator{top:80px}.home-target{font-size:17px!important}
+@media(max-width:800px){.field-only #hand{max-height:49svh}.draft-card{min-height:250px}.field-only:not(.needs-resources) #host-narrator{top:70px}.sheet-title>b{font-size:18px}.field-only #hand .base-purpose{font-size:11px}.field-only #hand .sheet-tools{margin-top:2px}#development{bottom:85px}#development b{font-size:18px}}
+
+.field-only #hud{grid-template-columns:auto 1fr 44px}@media(max-width:800px){.field-only #hud{grid-template-columns:1fr 44px}}
+
+.variant-trait{display:block;color:#e5ff96;font-size:11px;margin-top:3px}
