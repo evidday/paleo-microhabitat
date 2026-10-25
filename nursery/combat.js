@@ -22,7 +22,7 @@
    intents.forEach(function(intent){var u=intent.u,target=intent.target,dist=distance(u,target),d={unit:u.id,target:target.id,x:u.x,y:u.y,targetX:target.x,targetY:target.y,distance:dist,range:u.range,action:intent.action};decisions.push(d);
     function hit(to,damage,kind){var absorbed=Math.min(Math.max(0,damage-1),to.armor||0);events.push({from:u.id,to:to.id,damage:damage-absorbed,absorbed:absorbed,effective:0,kind:kind,fromX:u.x,fromY:u.y,toX:to.x,toY:to.y,distance:distance(u,to),range:u.range});}
     if(intent.action==='heal'){heals.push({from:u.id,to:target.id,amount:u.heal});return;}
-    if(intent.action==='attack'){hit(target,u.damage,u.range>1?'spore':'melee');if(u.splash)alive.filter(function(e){return e.owner!==u.owner&&e.id!==target.id&&distance(e,target)<=1.65;}).forEach(function(e){hit(e,Math.max(1,Math.floor(u.damage/2)),'splash');});return;}
+    if(intent.action==='attack'){if(u.damage<=0){d.action='guard';return;}hit(target,u.damage,u.range>1?'spore':'melee');if(u.splash)alive.filter(function(e){return e.owner!==u.owner&&e.id!==target.id&&distance(e,target)<=(u.splashRadius||1.65);}).forEach(function(e){hit(e,Math.max(1,Math.floor(u.damage/2)),'splash');});return;}
     if(intent.action==='jump'){
      var candidates=[{x:target.x+(u.owner===0?-.85:.85),y:target.y},{x:target.x,y:target.y+.85},{x:target.x,y:target.y-.85}];
      var spot=candidates.find(function(p){return p.x>=0&&p.x<=6&&p.y>=0&&p.y<=4&&!alive.some(function(v){return v.id!==u.id&&distance(p,v)<.7;});});

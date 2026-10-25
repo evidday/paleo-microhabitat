@@ -1,9 +1,2 @@
-// One coordinate system for terrain, colonies, pointers and battle playback.
-;(function(){
-    'use strict';
-    function hex(t){return {x:t.r*1.5,z:-Math.sqrt(3)*(t.q+t.r/2)};}
-    function home(g,owner){var base=hex(g.tiles[g.bases[owner]]);return {x:base.x,z:base.z+(owner===0?4.1:-4.1)};}
-    function slot(g,owner,index){var h=home(g,owner),side=owner===0?1:-1;return {x:h.x+(index%3-1)*2.05*side,z:h.z+(index<3?-1.1:1.2)*side};}
-    function battle(u){return {x:(u.y-2)*1.55,z:(3-u.x)*1.55};}
-    window.nurseryWorld={hex:hex,home:home,slot:slot,battle:battle};
-})();
+// One world: deployed units follow the frontier, reserve units stay at the home colony.
+;(function(){'use strict';function hex(t){return {x:t.r*1.5,z:-Math.sqrt(3)*(t.q+t.r/2)};}function home(g,owner){var b=hex(g.tiles[g.bases[owner]]);return {x:b.x,z:b.z+(owner===0?4.1:-4.1)};}function homeSlot(g,owner,index){var h=home(g,owner),side=owner===0?1:-1;return {x:h.x+(index%3-1)*2.05*side,z:h.z+(index<3?-1.1:index<6?1.2:2.9)*side};}function slot(g,owner,index){if(index>=nurseryConfig.activeSlots)return homeSlot(g,owner,index);var f=hex(g.tiles[g.players[owner].front]),side=owner===0?1:-1;return {x:f.x+(index%3-1)*1.2*side,z:f.z+((index<3?-.5:.65)+(g.challenge?1.2:0))*side};}function battle(u,g){var c=g&&g.battle&&g.battle.world?g.battle.world:{x:0,z:0};return {x:c.x+(u.y-2)*1.25,z:c.z+(3-u.x)*1.25};}window.nurseryWorld={hex:hex,home:home,homeSlot:homeSlot,slot:slot,battle:battle};})();
