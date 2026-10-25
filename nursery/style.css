@@ -37,3 +37,5 @@ body[data-panel=recruit] #hud .scoreboard,body[data-panel=recruit] #hud .resourc
 .shop-wallet>span{position:relative}.shop-wallet .resource-delta{top:-4px;right:-12px;font-weight:1000}
 
 .selected-offer-detail>button:disabled{font-size:18px;line-height:1.25;opacity:1;background:#d9c9df;color:#583f63}.selected-offer-detail>.hire-reason{display:none}
+
+.battle-income{display:grid;gap:7px;margin:14px 0;font-size:18px}.battle-income>b{font:400 20px Russo,sans-serif}.battle-income>span{display:flex;align-items:center;gap:8px}.report-stock{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:14px 0;font-size:22px;font-weight:950}.report-stock>b{flex-basis:100%;font:400 20px Russo,sans-serif}.report-stock>span{white-space:nowrap}#inspection .report-stock .game-icon,#inspection .battle-income .game-icon{width:29px;height:29px}
