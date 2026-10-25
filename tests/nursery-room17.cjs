@@ -5,7 +5,7 @@ const {chromium}=require(path.join(process.env.USERPROFILE,'.cache/codex-runtime
  try {
  const host=await browser.newPage(),guest=await browser.newPage({viewport:{width:390,height:950},isMobile:true,hasTouch:true}),errors=[];
  for(const p of[host,guest])p.on('pageerror',e=>errors.push(e.message));
- const base=process.env.SMASH_URL||pathToFileURL(path.resolve('src/index.html')).href;
+ const base=process.env.SMASH_URL||pathToFileURL(path.resolve('src/world-v17.html')).href;
  await host.goto(base+'?seed=42&v=17');await host.selectOption('#mode','room');await host.click('#create-room');
  await host.waitForFunction(()=>nurseryRoom.info().status==='waiting',null,{timeout:45000});
  const code=await host.evaluate(()=>nurseryRoom.info().code);

@@ -1,0 +1,29 @@
+{
+  "games": 240,
+  "stack": 57,
+  "land": 183,
+  "draw": 0,
+  "rounds": 1530,
+  "factions": [
+    92,
+    30,
+    75,
+    43
+  ],
+  "seatWins": [
+    123,
+    117
+  ],
+  "actions": {
+    "N_BEGIN": 3060,
+    "N_GROW": 1717,
+    "N_HIRE": 6084,
+    "N_READY": 3060,
+    "N_RESOLVE": 1530,
+    "N_NEXT": 1290,
+    "N_SELL": 566,
+    "N_FEED": 299,
+    "N_MOVE": 1502
+  },
+  "meanRounds": 6.375
+}

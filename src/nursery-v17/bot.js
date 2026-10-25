@@ -1,0 +1,15 @@
+;(function(){'use strict';var C=nurseryConfig,R=nurseryRules;
+ function choose(g){if(g.botStyle==='land'&&R.frontierGap(g)<=3&&R.tileKnown(g,g.tiles[g.players[1-g.active].front],g.active)&&R.forecast(g).winner!==g.active)return choose(Object.assign({},g,{botStyle:'stack',round:1}));var p=g.players[g.active],enemy=g.players[1-g.active],gap=R.frontierGap(g),legal=g.tiles.filter(function(t){return !R.growReason(g,t.id,g.active);}),goal=g.tiles[enemy.front];
+  if(g.botStyle==='land'&&g.round<8&&!g.challenge){var sites=g.tiles.filter(function(t){return t.base<0&&t.owner!==g.active&&(t.site==='ruin'&&p.unlocked.indexOf(t.rare)<0||t.site==='market'&&R.bankRate(g,g.active)>2);}).sort(function(a,b){return R.distance(g.tiles[p.front],a)-R.distance(g.tiles[p.front],b)||a.id-b.id;});if(sites.length)goal=sites[0];}
+  legal.sort(function(a,b){return R.distance(a,goal)-R.distance(b,goal)||(a.owner===g.active?1:0)-(b.owner===g.active?1:0)||a.id-b.id;});
+  var count=function(role){return enemy.units.filter(function(u){return u.role===role&&u.slot<C.activeSlots;}).length;};
+  var offers=p.hand.map(function(c){var plan=R.hirePlan(g,g.active,c.id);if(plan.reason)return null;var same=p.units.some(function(u){return R.species(u)===R.species(c);}),counters=[count(2),count(0),count(5),p.units.filter(function(u){return u.slot<C.activeSlots;}).length>=2?1:0,count(2)+count(3),count(0)+count(1)];return {card:c.id,score:(plan.tier-1)*3+(same?0:2)+Math.min(2,counters[c.role])*2};}).filter(Boolean).sort(function(a,b){return b.score-a.score||a.card-b.card;});
+  if(!p.developed){var march=legal.length&&!g.challenge&&(gap>1)&&(g.botStyle==='land'?g.round%3!==0:g.round%3===0||gap>3&&g.round%2===0||!offers.length);if(march)return {type:'N_GROW',id:legal[0].id,terrain:p.resources.indexOf(Math.min.apply(null,p.resources))};if(offers.length)return {type:'N_HIRE',card:offers[0].card};if(legal.length)return {type:'N_GROW',id:legal[0].id,terrain:p.resources.indexOf(Math.min.apply(null,p.resources))};}
+  var free=[];for(var slot=0;slot<C.activeSlots;slot++)if(!p.units.some(function(u){return u.slot===slot;}))free.push(slot);var reserve=p.units.find(function(u){return u.slot>=C.activeSlots;});if(reserve&&free.length)return {type:'N_MOVE',id:reserve.id,slot:free[0]};
+  var wrong=p.units.find(function(u){return u.slot<C.activeSlots&&(C.roles[u.role].range>1?u.slot<3:u.slot>=3);}),target=wrong&&free.find(function(s){return C.roles[wrong.role].range>1?s>=3:s<3;});if(wrong&&target!==undefined)return {type:'N_MOVE',id:wrong.id,slot:target};
+  if((g.challenge||gap<=2)&&R.affordable(p,C.feed)){var hungry=p.units.filter(function(u){return !u.fed&&u.slot<C.activeSlots;}).sort(function(a,b){return b.tier-a.tier||a.role-b.role;})[0];if(hungry)return {type:'N_FEED',id:hungry.id};}
+  return {type:'N_READY'};
+ }
+ function tradeAccept(g){var t=g.trade,p=t&&g.players[t.to];return !!t&&p.resources[t.take]>=t.amount&&p.resources[t.take]>p.resources[t.give];}
+ window.nurseryBot={choose:choose,tradeAccept:tradeAccept};
+})();

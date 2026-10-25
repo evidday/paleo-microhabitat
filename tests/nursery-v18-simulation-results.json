@@ -1,0 +1,14 @@
+{
+  "games": 240,
+  "wins": [
+    138,
+    102
+  ],
+  "draws": 0,
+  "limits": 0,
+  "rounds": 1526,
+  "buys": 6701,
+  "land": 1866,
+  "loot": 669,
+  "meanRounds": 6.358333333333333
+}
