@@ -1,0 +1,15 @@
+{
+  "games": 240,
+  "wins": [
+    132,
+    108
+  ],
+  "draws": 0,
+  "rounds": 5045,
+  "battles": 1710,
+  "rareUnlocks": 722,
+  "rareOwned": 525,
+  "limit": 0,
+  "meanRounds": 21.020833333333332,
+  "meanBattles": 7.125
+}
