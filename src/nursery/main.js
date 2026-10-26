@@ -6,8 +6,8 @@
     var timer=null,stopped=false;
     function schedule(){
         clearTimeout(timer);var g=store.state.nursery;if(stopped||g.mode!=='solo')return;if(g.trade&&g.trade.to===1&&['prepare','handoff'].indexOf(g.phase)>=0){timer=setTimeout(function(){store.dispatch('N_REPLY',{owner:1,accept:nurseryBot.tradeAccept(store.state.nursery)});},350);return;}if(g.active!==1)return;
-        if(g.phase==='handoff')timer=setTimeout(function(){store.dispatch('N_BEGIN');},500);
-        else if(g.phase==='prepare')timer=setTimeout(function(){var a=nurseryBot.choose(store.state.nursery);store.dispatch(a.type,a);},450);
+        if(g.phase==='handoff')timer=setTimeout(function(){store.dispatch('N_BEGIN');},800);
+        else if(g.phase==='prepare')timer=setTimeout(function(){var a=nurseryBot.choose(store.state.nursery);store.dispatch(a.type,a);},nurseryUI.botDelay());
     }
     var unsubscribe=store.subscribeTo('nursery',schedule);
     function loop(t){if(stopped)return;nurseryView.animate(t);requestAnimationFrame(loop);}

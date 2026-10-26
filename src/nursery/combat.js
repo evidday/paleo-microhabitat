@@ -17,7 +17,7 @@
    if(end())break;
    var alive=units.filter(function(u){return u.hp>0;}),events=[],decisions=[],moves=[],heals=[],pushes=[];
    var intents=alive.map(function(u){
-    var enemies=alive.filter(function(e){return e.owner!==u.owner;}).sort(function(a,b){return near(u,a,b);}),target=enemies[0];
+    var enemies=alive.filter(function(e){return e.owner!==u.owner;}).sort(function(a,b){return near(u,a,b);}),target=enemies[0];if(u.jump&&u.jumped)target=enemies.slice().sort(function(a,b){var priority=((b.heal?5:0)+b.range)-((a.heal?5:0)+a.range);return priority||near(u,a,b);})[0];
     if(u.reload>0){u.reload--;return {u:u,target:target,action:'reload'};}if(u.jump&&(!u.jumped||u.ability&&step%8===0&&(u.jumps||0)<u.ability+1)){target=enemies.slice().sort(function(a,b){var priority=((b.heal?5:0)+b.range)-((a.heal?5:0)+a.range),d=distance(u,b)-distance(u,a);return priority||(Math.abs(d)>.000001?d:tie(a,b,u.owner));})[0];return {u:u,target:target,action:'jump'};}
     if(u.heal&&step%2===0){var patient=alive.filter(function(a){return a.owner===u.owner&&a.hp<a.maxHp&&distance(u,a)<=u.range+.001;}).sort(function(a,b){return a.hp/a.maxHp-b.hp/b.maxHp||tie(a,b,u.owner);})[0];if(patient)return {u:u,target:patient,action:'heal'};}
     return {u:u,target:target,action:distance(u,target)<=u.range+.001?'attack':'move'};
