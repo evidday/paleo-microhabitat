@@ -1,7 +1,7 @@
 // One continuous world. Camera focus and animation never change the game state.
 ;(function(){
  'use strict';
- var gpu=null,g=null,key='',items=[],actors=[],land=null,shared={},benchActors=[],supply=[[],[]],last=0,cursor=0,previous=null,paused=false,speed=1,introUntil=0,frameKey='',lastBattle=null,priorPhase='',returnAt=-9999,growthAt=0,growthStamp='',sporesAt=0,commentAt=-9999;
+ var gpu=null,g=null,key='',items=[],actors=[],land=null,shared={},benchActors=[],supply=[[],[]],last=0,cursor=0,previous=null,paused=false,speed=1,introUntil=0,frameKey='',lastBattle=null,priorPhase='',returnAt=-9999,growthAt=0,growthStamp='',sporesAt=0,commentAt=-9999,tauntAt=-9999,tauntStamp='';
  var cameraGoal=null,cameraMode='',positions={},prepPositions={},G=lowPolyGL.Geometry,W=nurseryWorld,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  function tileSeed(t){return t.id%2;}function clamp(v){return Math.max(0,Math.min(1,v));}function mix(a,b,t){return a+(b-a)*t;}function ease(t){t=clamp(t);return t*t*(3-2*t);}
  function viewer(){return window.nurseryRoom?nurseryRoom.viewer(g):g.mode==='solo'?0:g.active;}
@@ -54,7 +54,7 @@
  }
  function sync(state){
   if(priorPhase==='result'&&state.phase!=='result'&&state.phase!=='over')returnAt=last;
-  g=state;if(g.lastGrowth&&g.lastGrowth.stamp!==growthStamp){growthStamp=g.lastGrowth.stamp;growthAt=last;}if(priorPhase==='battle'&&(g.phase==='result'||g.phase==='over'))sporesAt=last;
+  g=state;if(g.taunt&&g.taunt.owner+':'+g.taunt.round!==tauntStamp){tauntStamp=g.taunt.owner+':'+g.taunt.round;tauntAt=last;}if(g.lastGrowth&&g.lastGrowth.stamp!==growthStamp){growthStamp=g.lastGrowth.stamp;growthAt=last;}if(priorPhase==='battle'&&(g.phase==='result'||g.phase==='over'))sporesAt=last;
   if(g.phase==='battle'&&lastBattle!==g.battle){lastBattle=g.battle;cursor=0;previous=null;paused=false;introUntil=last+(reduced?100:nurseryConfig.introMs);frameKey='';}
   if((g.phase==='result'||g.phase==='over')&&g.battle)cursor=g.battle.frames.length-1;
   var next=g.revision+':'+g.phase;
@@ -118,7 +118,7 @@
    var centre=g.battle.world||{x:0,z:0};cameraGoal={target:[centre.x*arrival,mix(.4,.65,arrival),centre.z*arrival],zoom:mix(wideZoom,innerWidth<=800?3.5:Math.max(5.8,3.3*aspect),arrival),pitch:mix(innerWidth>800?.52:.82,.43,arrival),yaw:mix(innerWidth>800?.7:0,Math.PI/2,arrival)};
   }
   if(cameraGoal){var k=reduced?1:.09;gpu.camera.zoom=mix(gpu.camera.zoom,cameraGoal.zoom,k);gpu.camera.pitch=mix(gpu.camera.pitch,cameraGoal.pitch,k);gpu.camera.yaw+=Math.atan2(Math.sin(cameraGoal.yaw-gpu.camera.yaw),Math.cos(cameraGoal.yaw-gpu.camera.yaw))*k;gpu.camera.target=gpu.camera.target.map(function(n,i){return mix(n,cameraGoal.target[i],k);});}
-  gpu.clear(t/1000);gpu.draw(land);benchActors.forEach(function(a){var p=W.slot(g,a.owner,a.u.slot);gpu.draw(a.m,[p.x,.05,p.z],a.u.rest?.25:.8,0,a.owner===0?0:Math.PI);});
+  gpu.clear(t/1000);gpu.draw(land);if(g.taunt&&t-tauntAt<1200){var from=W.home(g,g.taunt.owner),to=W.home(g,1-g.taunt.owner),k=ease((t-tauntAt)/1200);for(var sp=0;sp<5;sp++)gpu.draw(shared.spore,[mix(from.x,to.x,k)+Math.sin(sp*2)*.25,.6+Math.sin(k*Math.PI)*3+sp*.05,mix(from.z,to.z,k)+Math.cos(sp*2)*.25],1.5);}benchActors.forEach(function(a){var p=W.slot(g,a.owner,a.u.slot);gpu.draw(a.m,[p.x,.05,p.z],a.u.rest?.25:.8,0,a.owner===0?0:Math.PI);});
   if(busy()){battle(t);if(g.drops&&sporesAt&&t-sporesAt<1500){g.drops.forEach(function(drop){var a=W.battle({x:drop.x,y:drop.y},g),b=W.home(g,drop.owner),k=ease((t-sporesAt)/1300);gpu.draw(shared.spore,[mix(a.x,b.x,k),.25+Math.sin(k*Math.PI)*1.1,mix(a.z,b.z,k)],1.2*(1-k*.6));});}}
   else{
    if(g.lastGrowth&&t-growthAt<1100){var a=W.hex(g.tiles[g.lastGrowth.from]),b=W.hex(g.tiles[g.lastGrowth.id]);for(var seed=0;seed<4;seed++){var k=ease((t-growthAt-seed*65)/800);gpu.draw(shared.spore,[mix(a.x,b.x,k),.16+Math.sin(k*Math.PI)*.16,mix(a.z,b.z,k)],.9-seed*.1);}}var coming=reduced?1:ease((t-returnAt)/850);
