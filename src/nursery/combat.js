@@ -18,18 +18,18 @@
    var alive=units.filter(function(u){return u.hp>0;}),events=[],decisions=[],moves=[],heals=[],pushes=[];
    var intents=alive.map(function(u){
     var enemies=alive.filter(function(e){return e.owner!==u.owner;}).sort(function(a,b){return near(u,a,b);}),target=enemies[0];
-    if(u.reload>0){u.reload--;return {u:u,target:target,action:'reload'};}if(u.jump&&!u.jumped){target=enemies.slice().sort(function(a,b){var priority=((b.heal?5:0)+b.range)-((a.heal?5:0)+a.range),d=distance(u,b)-distance(u,a);return priority||(Math.abs(d)>.000001?d:tie(a,b,u.owner));})[0];return {u:u,target:target,action:'jump'};}
+    if(u.reload>0){u.reload--;return {u:u,target:target,action:'reload'};}if(u.jump&&(!u.jumped||u.ability&&step%8===0&&(u.jumps||0)<u.ability+1)){target=enemies.slice().sort(function(a,b){var priority=((b.heal?5:0)+b.range)-((a.heal?5:0)+a.range),d=distance(u,b)-distance(u,a);return priority||(Math.abs(d)>.000001?d:tie(a,b,u.owner));})[0];return {u:u,target:target,action:'jump'};}
     if(u.heal&&step%2===0){var patient=alive.filter(function(a){return a.owner===u.owner&&a.hp<a.maxHp&&distance(u,a)<=u.range+.001;}).sort(function(a,b){return a.hp/a.maxHp-b.hp/b.maxHp||tie(a,b,u.owner);})[0];if(patient)return {u:u,target:patient,action:'heal'};}
     return {u:u,target:target,action:distance(u,target)<=u.range+.001?'attack':'move'};
    });
    intents.forEach(function(intent){var u=intent.u,target=intent.target,dist=distance(u,target),d={unit:u.id,target:target.id,x:u.x,y:u.y,targetX:target.x,targetY:target.y,distance:dist,range:u.range,action:intent.action};decisions.push(d);
     function hit(to,damage,kind){if(u.range>1&&intents.some(function(i){return i.u.id===to.id&&i.action==='jump';})){events.push({from:u.id,to:to.id,damage:0,absorbed:0,effective:0,kind:'evade',fromX:u.x,fromY:u.y,toX:to.x,toY:to.y,distance:distance(u,to),range:u.range});return;}var absorbed=Math.min(Math.max(0,damage-(kind==='splash'?0:1)),to.armor||0);events.push({from:u.id,to:to.id,damage:damage-absorbed,absorbed:absorbed,effective:0,kind:kind,fromX:u.x,fromY:u.y,toX:to.x,toY:to.y,distance:distance(u,to),range:u.range});}
-    if(intent.action==='reload')return;if(intent.action==='heal'){heals.push({from:u.id,to:target.id,amount:u.heal});return;}
-    if(intent.action==='attack'){if(u.damage<=0){d.action='guard';return;}hit(target,u.damage,u.range>1?'spore':'melee');if(u.role===1)u.punches=(u.punches||0)+1;if(u.role===1&&u.damage>=5&&u.punches%3===0)pushes.push({from:u.id,to:target.id,x:(target.x-u.x)/(dist||1)*.45/(1+(target.armor||0)*.25),y:(target.y-u.y)/(dist||1)*.45/(1+(target.armor||0)*.25)});if(u.splash){u.reload=1;alive.filter(function(e){return e.owner!==u.owner&&e.id!==target.id&&distance(e,target)<=(u.splashRadius||1.65);}).sort(function(a,b){return distance(a,target)-distance(b,target)||tie(a,b,u.owner);}).slice(0,2).forEach(function(e){hit(e,Math.max(1,Math.floor(u.damage/2)),'splash');});}return;}
-    if(intent.action==='jump'){
+    if(intent.action==='reload')return;if(intent.action==='heal'){heals.push({from:u.id,to:target.id,amount:u.heal});if(u.ability&&step%6===0)d.cast=nurseryConfig.abilities[u.role];if(u.ability&&step%6===0)alive.filter(function(a){return a.owner===u.owner&&a.id!==target.id&&a.hp<a.maxHp;}).slice(0,u.ability).forEach(function(a){heals.push({from:u.id,to:a.id,amount:u.heal});});return;}
+    if(intent.action==='attack'){if(u.damage<=0){d.action='guard';return;}var cast=u.ability&&step%3===0,bonus=cast&&(u.role===1||u.role===5)?u.ability:0;hit(target,u.damage+bonus,u.range>1?'spore':'melee');if(cast&&u.role===2){var acid=events[events.length-1];acid.acid=u.ability;}if(cast)d.cast=nurseryConfig.abilities[u.role];if(u.role===1)u.punches=(u.punches||0)+1;if(u.role===1&&u.damage>=5&&u.punches%3===0)pushes.push({from:u.id,to:target.id,x:(target.x-u.x)/(dist||1)*.45/(1+(target.armor||0)*.25),y:(target.y-u.y)/(dist||1)*.45/(1+(target.armor||0)*.25)});if(u.splash){u.reload=1;alive.filter(function(e){return e.owner!==u.owner&&e.id!==target.id&&distance(e,target)<=(u.splashRadius||1.65);}).sort(function(a,b){return distance(a,target)-distance(b,target)||tie(a,b,u.owner);}).slice(0,2).forEach(function(e){hit(e,Math.max(1,Math.floor(u.damage/2)),'splash');});}return;}
+    if(intent.action==='jump'){if(u.jumped)d.cast=nurseryConfig.abilities[u.role];
      var candidates=[{x:target.x+(u.owner===0?-.85:.85),y:target.y},{x:target.x,y:target.y+.85},{x:target.x,y:target.y-.85}];
      var spot=candidates.find(function(p){return p.x>=0&&p.x<=6&&p.y>=0&&p.y<=4&&supported(p)&&!alive.some(function(v){return v.id!==u.id&&distance(p,v)<.7;});});
-     if(spot){moves.push({id:u.id,x:spot.x,y:spot.y});d.endX=spot.x;d.endY=spot.y;}else d.action='move';u.jumped=true;
+     if(spot){moves.push({id:u.id,x:spot.x,y:spot.y});d.endX=spot.x;d.endY=spot.y;}else d.action='move';u.jumped=true;u.jumps=(u.jumps||0)+1;
      if(spot)return;
     }
     var other=intents.find(function(i){return i.u.id===target.id;}),closing=other&&(other.action==='move')?2:1;
@@ -51,6 +51,7 @@
    pushes.forEach(function(push){var u=units.find(function(u){return u.id===push.to;}),p={x:Math.max(0,Math.min(6,u.x+push.x)),y:Math.max(0,Math.min(4,u.y+push.y))};u.x=p.x;u.y=p.y;if(!supported(p))fall(u,push.from);});
    units.forEach(function(u){u.x=Math.round(u.x*1000000)/1000000;u.y=Math.round(u.y*1000000)/1000000;});
    units.forEach(function(target){var hits=events.filter(function(e){return e.to===target.id;}),total=hits.reduce(function(n,e){return n+e.damage;},0),effective=Math.min(target.hp,total);hits.forEach(function(e){e.effective=total?effective*e.damage/total:0;});target.hp=Math.max(0,target.hp-total);});
+   events.filter(function(e){return e.acid&&e.damage>0;}).forEach(function(e){var target=units.find(function(u){return u.id===e.to;});target.armor=Math.max(0,(target.armor||0)-e.acid);});
    heals.forEach(function(h){var target=units.find(function(u){return u.id===h.to;});if(target.hp<=0)return;var amount=Math.min(h.amount,target.maxHp-target.hp);if(!amount)return;target.hp+=amount;events.push({from:h.from,to:h.to,damage:0,heal:amount,effective:0,kind:'heal'});});
    frame(events,decisions);
   }

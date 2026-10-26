@@ -1,0 +1,62 @@
+{
+  "mirrorGames": 500,
+  "mirrorFailures": 0,
+  "purchaseOrderGames": 500,
+  "asymmetricOrderCases": 500,
+  "roleCoverage": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "counterResults": [
+    {
+      "name": "boxer beats armor",
+      "roles": [
+        1,
+        0
+      ],
+      "winner": 0
+    },
+    {
+      "name": "armor beats weak ranged hits",
+      "roles": [
+        0,
+        2
+      ],
+      "winner": 0
+    },
+    {
+      "name": "ranged punishes unprotected boxer",
+      "roles": [
+        2,
+        1
+      ],
+      "winner": 0
+    },
+    {
+      "name": "jumper reaches ranged unit",
+      "roles": [
+        4,
+        2
+      ],
+      "winner": 0
+    },
+    {
+      "name": "ranged outranges bomber",
+      "roles": [
+        2,
+        5
+      ],
+      "winner": 0
+    }
+  ],
+  "formation": {
+    "role": 1,
+    "tier": 3,
+    "before": 0,
+    "after": 1
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "games": 240,
+  "wins": [
+    110,
+    129
+  ],
+  "draws": 1,
+  "rounds": 1916,
+  "battles": 1068,
+  "falls": 71,
+  "slips": 506,
+  "meanRounds": 7.983333333333333,
+  "meanBattles": 4.45
+}
